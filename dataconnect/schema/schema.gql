@@ -1,0 +1,15 @@
+type User @table {
+  email: String!
+  displayName: String!
+}
+
+type Company @table {
+  name: String!
+}
+
+type Job @table {
+  title: String!
+  status: String!
+  company: Company
+  user: User
+}

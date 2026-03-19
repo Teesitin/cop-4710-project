@@ -21,5 +21,9 @@
 		"tailwindcss": "^4.2.2",
 		"typescript": "^5.9.3",
 		"vite": "^7.3.1"
+	},
+	"dependencies": {
+		"dataconnect-generated": "link:../../Users/Teesitin/AppData/Local/pnpm/global/5/node_modules/src/dataconnect-generated",
+		"firebase": "^12.11.0"
 	}
 }
