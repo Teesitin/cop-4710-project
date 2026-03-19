@@ -37,6 +37,7 @@
 
     async function loadJobs() {
         try {
+            loading = true;
             error = '';
 
             const ref = listJobsRef();
@@ -62,25 +63,44 @@
         try {
             saving = true;
 
+            const companyNameValue = companyName.trim();
+            const jobTitleValue = jobTitle.trim();
+            const statusValue = status.trim();
+
             const createCompanyResult = await executeMutation(
                 createCompanyRef({
-                    name: companyName.trim()
+                    name: companyNameValue
                 })
             );
 
-            const companyId = createCompanyResult.data.company_insert?.id;
+            const companyId = createCompanyResult.data.company_insert.id;
 
             if (!companyId) {
                 throw new Error('Company ID was not returned.');
             }
 
-            await executeMutation(
+            const createJobResult = await executeMutation(
                 createJobRef({
-                    title: jobTitle.trim(),
-                    status: status.trim(),
+                    title: jobTitleValue,
+                    status: statusValue,
                     companyId
                 })
             );
+
+            const jobId = createJobResult.data.job_insert.id;
+
+            jobs = [
+                {
+                    id: jobId,
+                    title: jobTitleValue,
+                    status: statusValue,
+                    company: {
+                        id: companyId,
+                        name: companyNameValue
+                    }
+                },
+                ...jobs
+            ];
 
             companyName = '';
             jobTitle = '';
@@ -162,7 +182,7 @@
                 type="button"
                 onclick={handleSubmit}
                 disabled={saving}
-                class="rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
+                class="rounded-xl bg-orange-500 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
             >
                 {#if saving}
                     Saving...
@@ -172,6 +192,10 @@
             </button>
         </div>
     </div>
+
+    <h2 class="mb-4 text-xl font-semibold text-gray-900">Jobs</h2>
+
+
 
     {#if loading}
         <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
