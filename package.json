@@ -23,7 +23,7 @@
 		"vite": "^7.3.1"
 	},
 	"dependencies": {
-		"dataconnect-generated": "link:../../Users/Teesitin/AppData/Local/pnpm/global/5/node_modules/src/dataconnect-generated",
+		"dataconnect-generated": "link:./src/dataconnect-generated",
 		"firebase": "^12.11.0"
 	}
 }

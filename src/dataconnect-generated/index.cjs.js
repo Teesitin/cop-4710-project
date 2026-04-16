@@ -1,4 +1,4 @@
-const { queryRef, executeQuery, mutationRef, executeMutation, validateArgs } = require('firebase/data-connect');
+const { queryRef, executeQuery, validateArgsWithOptions, mutationRef, executeMutation, validateArgs, makeMemoryCacheProvider } = require('firebase/data-connect');
 
 const connectorConfig = {
   connector: 'example',
@@ -6,6 +6,12 @@ const connectorConfig = {
   location: 'us-east4'
 };
 exports.connectorConfig = connectorConfig;
+const dataConnectSettings = {
+  cacheSettings: {
+    cacheProvider: makeMemoryCacheProvider()
+  }
+};
+exports.dataConnectSettings = dataConnectSettings;
 
 const listJobsRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
@@ -15,9 +21,12 @@ const listJobsRef = (dc) => {
 listJobsRef.operationName = 'ListJobs';
 exports.listJobsRef = listJobsRef;
 
-exports.listJobs = function listJobs(dc) {
-  return executeQuery(listJobsRef(dc));
-};
+exports.listJobs = function listJobs(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listJobsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+;
 
 const createCompanyRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -28,8 +37,10 @@ createCompanyRef.operationName = 'CreateCompany';
 exports.createCompanyRef = createCompanyRef;
 
 exports.createCompany = function createCompany(dcOrVars, vars) {
-  return executeMutation(createCompanyRef(dcOrVars, vars));
-};
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createCompanyRef(dcInstance, inputVars));
+}
+;
 
 const createJobRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -40,5 +51,7 @@ createJobRef.operationName = 'CreateJob';
 exports.createJobRef = createJobRef;
 
 exports.createJob = function createJob(dcOrVars, vars) {
-  return executeMutation(createJobRef(dcOrVars, vars));
-};
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createJobRef(dcInstance, inputVars));
+}
+;

@@ -1,6 +1,7 @@
-import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise } from 'firebase/data-connect';
+import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, ExecuteQueryOptions, MutationRef, MutationPromise, DataConnectSettings } from 'firebase/data-connect';
 
 export const connectorConfig: ConnectorConfig;
+export const dataConnectSettings: DataConnectSettings;
 
 export type TimestampString = string;
 export type UUIDString = string;
@@ -69,8 +70,8 @@ interface ListJobsRef {
 }
 export const listJobsRef: ListJobsRef;
 
-export function listJobs(): QueryPromise<ListJobsData, undefined>;
-export function listJobs(dc: DataConnect): QueryPromise<ListJobsData, undefined>;
+export function listJobs(options?: ExecuteQueryOptions): QueryPromise<ListJobsData, undefined>;
+export function listJobs(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListJobsData, undefined>;
 
 interface CreateCompanyRef {
   /* Allow users to create refs without passing in DataConnect */

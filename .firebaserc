@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "cop-4710-ab900"
-  }
+    "default": "cop-4710-ab900",
+    "JobTracker": "cop-4710-ab900"
+  },
+  "targets": {},
+  "etags": {}
 }
