@@ -1,15 +1,19 @@
-type User @table {
-  email: String!
-  displayName: String!
+type Applicant @table {
+    name: String!
+    email: String!
 }
 
-type Company @table {
-  name: String!
+type Application @table {
+    applicant: Applicant!
+    job: Job!
+    salaryProposed: Float
+    status: String!
+    appliedDate: Date!
 }
 
 type Job @table {
-  title: String!
-  status: String!
-  company: Company
-  user: User
+    applicant: Applicant!
+    title: String!
+    status: String!
+    salary: String
 }

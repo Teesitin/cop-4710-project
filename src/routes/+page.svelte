@@ -4,7 +4,7 @@
             ⚠️ No Content Yet
         </div>
         <div class="text-sm opacity-80">
-            This section hasn’t been set up yet. Check back soon.
+            This section hasn't been set up yet. Check back soon.
         </div>
     </div>
 </div>
