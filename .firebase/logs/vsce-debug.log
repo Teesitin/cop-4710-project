@@ -46,3 +46,5 @@ I0421 14:19:24.273826   31408 load.go:109] Finished reloading
  {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0421 14:19:24.284331   31408 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
 [debug] [2026-04-21T18:19:24.363Z] I0421 14:19:24.364262   31408 engine.go:209] [projects/emulator/locations/emulator/services/cop-4710-connect 6efd] ExecuteGraphqlRead query IntrospectionQuery: succeeded. 
  {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0421 14:19:24.364262   31408 engine.go:209] [projects/emulator/locations/emulator/services/cop-4710-connect 6efd] ExecuteGraphqlRead query IntrospectionQuery: succeeded. \n"}}
+[info] [Firebase Plugin] Stopping SQL Connect toolkit
+[warn] !  SQL Connect Emulator has exited upon receiving signal: SIGINT 
