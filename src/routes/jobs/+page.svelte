@@ -44,8 +44,8 @@
 
     let searchQuery = $state('');
     let filteredJobs = $derived(
-        jobs.filter(job => job.title.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+        jobs.filter(job => job.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
 
     const statuses = ['Open', 'Interviewing', 'Filled', 'Closed'];
 

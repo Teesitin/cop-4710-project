@@ -4,7 +4,7 @@
     import { getDataConnect, executeQuery } from 'firebase/data-connect';
 
     import {
-        listEmployeesRef,
+        listEmployees,
         connectorConfig
     } from '../../dataconnect-generated';
 
@@ -15,7 +15,7 @@
     const dc = getDataConnect(connectorConfig);
 
     type EmployeeRow = {
-        key: string;
+        id: string;
         name: string;
         email: string;
         role: string;
@@ -52,8 +52,9 @@
             loading = true;
             error = '';
 
-            const result = await executeQuery(listEmployeesRef());
+            const result = await listEmployees();
             employees = result.data.employees ?? [];
+
         } catch (err) {
             console.error('loadEmployees error:', err);
             error = 'Failed to load employees.';
@@ -110,7 +111,7 @@
                 </thead>
 
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-600 bg-white dark:bg-gray-700">
-                    {#each employees as emp (emp.key)}
+                    {#each employees as emp (emp.id)}
                         <tr class="transition hover:bg-gray-50 dark:hover:bg-gray-600">
                             <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                                 {emp.name}
