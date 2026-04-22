@@ -2,13 +2,14 @@
     import { onMount } from 'svelte';
     import { initializeApp } from 'firebase/app';
     import { getDataConnect, executeQuery, executeMutation } from 'firebase/data-connect';
+    import AddJob from '$lib/assets/forms/AddJob.svelte';
 
     import {
         listJobsRef,
         createJobRef,
         deleteJobRef,
         updateJobStatusRef,
-        updateJobRef, // <-- New generated mutation!
+        updateJobRef,
         connectorConfig,
     } from '../../dataconnect-generated';
 
@@ -42,10 +43,66 @@
     let editSalary = $state('');
     let editStatus = $state('Open');
 
+    // --- NEW: Search & Sorting State ---
     let searchQuery = $state('');
+<<<<<<< Updated upstream
     let filteredJobs = $derived(
         jobs.filter(job => job.title.toLowerCase().includes(searchQuery.toLowerCase()))
     );
+=======
+    
+    // Track which column is being sorted and in what direction
+    type SortColumn = 'title' | 'salary' | 'status' | null;
+    type SortDirection = 'asc' | 'desc' | 'default';
+    let sortColumn = $state<SortColumn>(null);
+    let sortDirection = $state<SortDirection>('default');
+
+    // Cycle through: Default -> Ascending -> Descending -> Default
+    function toggleSort(col: SortColumn) {
+        if (sortColumn === col) {
+            if (sortDirection === 'default') sortDirection = 'asc';
+            else if (sortDirection === 'asc') sortDirection = 'desc';
+            else sortDirection = 'default';
+        } else {
+            sortColumn = col;
+            sortDirection = 'asc';
+        }
+        
+        // Reset column tracker if we are back to default
+        if (sortDirection === 'default') {
+            sortColumn = null;
+        }
+    }
+
+    let filteredJobs = $derived.by(() => {
+        // 1. FILTERING 
+        let result = jobs.filter(job => {
+            const query = searchQuery.toLowerCase();
+            const matchTitle = job.title.toLowerCase().includes(query);
+            const matchSalary = (job.salary || '').toLowerCase().includes(query);
+            return matchTitle || matchSalary;
+        });
+
+        // 2. SORTING (Runs only if a column is clicked and not on 'default')
+        if (sortColumn && sortDirection !== 'default') {
+            result.sort((a, b) => {
+                const valA = (a[sortColumn] || '').toLowerCase();
+                const valB = (b[sortColumn] || '').toLowerCase();
+
+                // NEW: Only use numeric sorting if they clicked the Salary column!
+                const isNumericCol = sortColumn === 'salary';
+
+                if (sortDirection === 'asc') {
+                    return valA.localeCompare(valB, undefined, { numeric: isNumericCol });
+                } else {
+                    return valB.localeCompare(valA, undefined, { numeric: isNumericCol });
+                }
+            });
+        }
+
+        return result;
+    });
+>>>>>>> Stashed changes
 
     const statuses = ['Open', 'Interviewing', 'Filled', 'Closed'];
 
@@ -54,7 +111,7 @@
             loading = true;
             error = '';
             const result = await executeQuery(listJobsRef());
-            // REVERSE the array so newest jobs stay at the top!
+            // REVERSE the array so newest jobs stay at the top (This is our 'default' sort!)
             jobs = result.data.jobs ? [...result.data.jobs].reverse() : [];
         } catch (err) {
             console.error('loadJobs error:', err);
@@ -157,7 +214,6 @@
         }
     }
 
-    // Single Status Change (For when you aren't in full Edit Mode)
     async function handleStatusChange(jobId: string, newStatus: string) {
         try {
             await executeMutation(updateJobStatusRef({ id: jobId, status: newStatus }));
@@ -196,7 +252,7 @@
         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage available jobs</p>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 shadow rounded-2xl">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-6 shadow rounded-2xl">
         <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Add Job</h2>
 
         <div class="grid gap-4 md:grid-cols-3">
@@ -231,39 +287,74 @@
         </div>
     </div>
 
-
     <div class="mb-4 flex items-center justify-between">
-        <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Jobs Database</h2>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Jobs Database</h2>
         <div class="w-64">
             <input
                 type="text"
                 bind:value={searchQuery}
-                placeholder="Search jobs..."
+                placeholder="Search jobs & salaries..."
                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm text-gray-900 dark:text-white outline-none transition focus:border-blue-500"
             />
         </div>    
     </div>
 
-
     {#if loading}
         <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm"><p class="text-sm text-gray-600 dark:text-gray-400">Loading jobs...</p></div>
     {:else if error}
         <div class="rounded-2xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 p-6 shadow-sm"><p class="text-sm font-medium text-red-700 dark:text-red-400">{error}</p></div>
-    {:else if jobs.length === 0}
-        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm"><p class="text-sm text-gray-600 dark:text-gray-400">No jobs found. Add one above!</p></div>
+    {:else if filteredJobs.length === 0}
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                {#if jobs.length === 0}
+                    No jobs found. Add one above!
+                {:else}
+                    No jobs match your search.
+                {/if}
+            </p>
+        </div>
     {:else}
         <div class="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-900/50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">Job Title</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">Salary</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">Status</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">Actions</th>
+                        <th 
+                            class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 cursor-pointer select-none hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                            onclick={() => toggleSort('title')}
+                        >
+                            Job Title
+                            {#if sortColumn === 'title'}
+                                <span class="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                            {/if}
+                        </th>
+                        
+                        <th 
+                            class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 cursor-pointer select-none hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                            onclick={() => toggleSort('salary')}
+                        >
+                            Salary
+                            {#if sortColumn === 'salary'}
+                                <span class="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                            {/if}
+                        </th>
+                        
+                        <th 
+                            class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 cursor-pointer select-none hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                            onclick={() => toggleSort('status')}
+                        >
+                            Status
+                            {#if sortColumn === 'status'}
+                                <span class="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                            {/if}
+                        </th>
+                        
+                        <th class="px-6 py-3 text-right text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                            Actions
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
-                    {#each jobs as job (job.id)}
+                    {#each filteredJobs as job (job.id)}
                         <tr class="transition hover:bg-gray-50 dark:hover:bg-gray-700/50">
                             
                             {#if editingId === job.id}
