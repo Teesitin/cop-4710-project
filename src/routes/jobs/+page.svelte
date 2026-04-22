@@ -1,17 +1,20 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { initializeApp } from 'firebase/app';
-    import { executeQuery, executeMutation } from 'firebase/data-connect';
-    
-    const app = initializeApp({
-  projectId: "cop-4710-ab900",
-});
+    import { getDataConnect, connectDataConnectEmulator, executeQuery, executeMutation } from 'firebase/data-connect';
 
     import {
+        connectorConfig,
         listJobsRef,
         createCompanyRef,
         createJobRef
     } from '../../dataconnect-generated';
+
+    const app = initializeApp({
+        projectId: 'cop-4710-ab900'
+    });
+
+    const dc = getDataConnect(connectorConfig);
 
     type JobRow = {
         id: string;
@@ -36,12 +39,11 @@
             loading = true;
             error = '';
 
-            const ref = listJobsRef();
-            const result = await executeQuery(ref);
+            const result = await executeQuery(listJobsRef());
 
             jobs = result.data.jobs ?? [];
         } catch (err) {
-            console.error(err);
+            console.error('loadJobs error:', err);
             error = 'Failed to load jobs from Data Connect.';
         } finally {
             loading = false;
@@ -98,9 +100,8 @@
 
             companyName = '';
             jobTitle = '';
-
         } catch (err) {
-            console.error(err);
+            console.error('handleSubmit error:', err);
             formError = 'Failed to create job.';
         } finally {
             saving = false;
@@ -116,14 +117,14 @@
     <title>Job Tracker</title>
 </svelte:head>
 
-<div class="mx-auto min-h-screen max-w-5xl px-6 py-10">
+<section class="mx-auto max-w-5xl p-10 space-y-10">
     <div class="mb-8">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900">Job Tracker</h1>
-        <p class="mt-2 text-sm text-gray-500">Manage available jobs and companies</p>
+        <h1 class="text-3xl font-bold tracking-tight">Job Tracker</h1>
+        <p class="mt-1 text-sm">Manage available jobs and companies</p>
     </div>
 
-    <div class="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 class="mb-4 text-xl font-semibold text-gray-900">Add Job</h2>
+    <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-6 shadow rounded-2xl">
+        <h2 class="mb-4 text-xl font-semibold">Add Job</h2>
 
         <div class="grid gap-4 md:grid-cols-2">
             <div>
@@ -207,4 +208,4 @@
             </table>
         </div>
     {/if}
-</div>
+</section>

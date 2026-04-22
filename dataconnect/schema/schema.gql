@@ -3,17 +3,16 @@ type Applicant @table {
     email: String!
 }
 
+type Job @table {
+    title: String!
+    status: String!
+    salary: String
+}
+
 type Application @table {
     applicant: Applicant!
     job: Job!
     salaryProposed: Float
     status: String!
     appliedDate: Date!
-}
-
-type Job @table {
-    applicant: Applicant!
-    title: String!
-    status: String!
-    salary: String
 }

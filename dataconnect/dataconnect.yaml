@@ -1,13 +1,14 @@
 specVersion: "v1"
 serviceId: "cop-4710-connect"
 location: "us-east4"
-schemas:
-  - source: "./schema"
-    datasource:
-      postgresql:
-        database: "fdcdb"
-        cloudSql:
-          instanceId: "cop-4710-connect-fdc"
-          # schemaValidation: "STRICT"     # STRICT mode makes Postgres schema match Data Connect exactly.
-          # schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
+
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "fdcdb"
+      cloudSql:
+        instanceId: "cop-4710-connect-fdc"
+        schemaValidation: "STRICT"
+
 connectorDirs: ["./example"]
