@@ -11,17 +11,14 @@ export type DateString = string;
 
 
 
-export interface Company_Key {
+export interface Applicant_Key {
   id: UUIDString;
-  __typename?: 'Company_Key';
+  __typename?: 'Applicant_Key';
 }
 
-export interface CreateCompanyData {
-  company_insert: Company_Key;
-}
-
-export interface CreateCompanyVariables {
-  name: string;
+export interface Application_Key {
+  id: UUIDString;
+  __typename?: 'Application_Key';
 }
 
 export interface CreateJobData {
@@ -31,7 +28,15 @@ export interface CreateJobData {
 export interface CreateJobVariables {
   title: string;
   status: string;
-  companyId: UUIDString;
+  salary?: string | null;
+}
+
+export interface DeleteJobData {
+  job_delete?: Job_Key | null;
+}
+
+export interface DeleteJobVariables {
+  id: UUIDString;
 }
 
 export interface Job_Key {
@@ -44,21 +49,17 @@ export interface ListJobsData {
     id: UUIDString;
     title: string;
     status: string;
-    company?: {
-      id: UUIDString;
-      name: string;
-    } & Company_Key;
-      user?: {
-        id: UUIDString;
-        email: string;
-        displayName: string;
-      } & User_Key;
+    salary?: string | null;
   } & Job_Key)[];
 }
 
-export interface User_Key {
+export interface UpdateJobStatusData {
+  job_update?: Job_Key | null;
+}
+
+export interface UpdateJobStatusVariables {
   id: UUIDString;
-  __typename?: 'User_Key';
+  status: string;
 }
 
 interface ListJobsRef {
@@ -73,18 +74,6 @@ export const listJobsRef: ListJobsRef;
 export function listJobs(options?: ExecuteQueryOptions): QueryPromise<ListJobsData, undefined>;
 export function listJobs(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListJobsData, undefined>;
 
-interface CreateCompanyRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: CreateCompanyVariables): MutationRef<CreateCompanyData, CreateCompanyVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: CreateCompanyVariables): MutationRef<CreateCompanyData, CreateCompanyVariables>;
-  operationName: string;
-}
-export const createCompanyRef: CreateCompanyRef;
-
-export function createCompany(vars: CreateCompanyVariables): MutationPromise<CreateCompanyData, CreateCompanyVariables>;
-export function createCompany(dc: DataConnect, vars: CreateCompanyVariables): MutationPromise<CreateCompanyData, CreateCompanyVariables>;
-
 interface CreateJobRef {
   /* Allow users to create refs without passing in DataConnect */
   (vars: CreateJobVariables): MutationRef<CreateJobData, CreateJobVariables>;
@@ -96,4 +85,28 @@ export const createJobRef: CreateJobRef;
 
 export function createJob(vars: CreateJobVariables): MutationPromise<CreateJobData, CreateJobVariables>;
 export function createJob(dc: DataConnect, vars: CreateJobVariables): MutationPromise<CreateJobData, CreateJobVariables>;
+
+interface UpdateJobStatusRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateJobStatusVariables): MutationRef<UpdateJobStatusData, UpdateJobStatusVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateJobStatusVariables): MutationRef<UpdateJobStatusData, UpdateJobStatusVariables>;
+  operationName: string;
+}
+export const updateJobStatusRef: UpdateJobStatusRef;
+
+export function updateJobStatus(vars: UpdateJobStatusVariables): MutationPromise<UpdateJobStatusData, UpdateJobStatusVariables>;
+export function updateJobStatus(dc: DataConnect, vars: UpdateJobStatusVariables): MutationPromise<UpdateJobStatusData, UpdateJobStatusVariables>;
+
+interface DeleteJobRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteJobVariables): MutationRef<DeleteJobData, DeleteJobVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: DeleteJobVariables): MutationRef<DeleteJobData, DeleteJobVariables>;
+  operationName: string;
+}
+export const deleteJobRef: DeleteJobRef;
+
+export function deleteJob(vars: DeleteJobVariables): MutationPromise<DeleteJobData, DeleteJobVariables>;
+export function deleteJob(dc: DataConnect, vars: DeleteJobVariables): MutationPromise<DeleteJobData, DeleteJobVariables>;
 

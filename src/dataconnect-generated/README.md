@@ -10,8 +10,9 @@ This README will guide you through the process of using the generated JavaScript
 - [**Queries**](#queries)
   - [*ListJobs*](#listjobs)
 - [**Mutations**](#mutations)
-  - [*CreateCompany*](#createcompany)
   - [*CreateJob*](#createjob)
+  - [*UpdateJobStatus*](#updatejobstatus)
+  - [*DeleteJob*](#deletejob)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `example`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -99,15 +100,7 @@ export interface ListJobsData {
     id: UUIDString;
     title: string;
     status: string;
-    company?: {
-      id: UUIDString;
-      name: string;
-    } & Company_Key;
-      user?: {
-        id: UUIDString;
-        email: string;
-        displayName: string;
-      } & User_Key;
+    salary?: string | null;
   } & Job_Key)[];
 }
 ```
@@ -177,115 +170,6 @@ The following is true for both the action shortcut function and the `MutationRef
 
 Below are examples of how to use the `example` connector's generated functions to execute each mutation. You can also follow the examples from the [Data Connect documentation](https://firebase.google.com/docs/data-connect/web-sdk#using-mutations).
 
-## CreateCompany
-You can execute the `CreateCompany` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
-```typescript
-createCompany(vars: CreateCompanyVariables): MutationPromise<CreateCompanyData, CreateCompanyVariables>;
-
-interface CreateCompanyRef {
-  ...
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: CreateCompanyVariables): MutationRef<CreateCompanyData, CreateCompanyVariables>;
-}
-export const createCompanyRef: CreateCompanyRef;
-```
-You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
-```typescript
-createCompany(dc: DataConnect, vars: CreateCompanyVariables): MutationPromise<CreateCompanyData, CreateCompanyVariables>;
-
-interface CreateCompanyRef {
-  ...
-  (dc: DataConnect, vars: CreateCompanyVariables): MutationRef<CreateCompanyData, CreateCompanyVariables>;
-}
-export const createCompanyRef: CreateCompanyRef;
-```
-
-If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the createCompanyRef:
-```typescript
-const name = createCompanyRef.operationName;
-console.log(name);
-```
-
-### Variables
-The `CreateCompany` mutation requires an argument of type `CreateCompanyVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
-
-```typescript
-export interface CreateCompanyVariables {
-  name: string;
-}
-```
-### Return Type
-Recall that executing the `CreateCompany` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
-
-The `data` property is an object of type `CreateCompanyData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
-```typescript
-export interface CreateCompanyData {
-  company_insert: Company_Key;
-}
-```
-### Using `CreateCompany`'s action shortcut function
-
-```typescript
-import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, createCompany, CreateCompanyVariables } from '@dataconnect/generated';
-
-// The `CreateCompany` mutation requires an argument of type `CreateCompanyVariables`:
-const createCompanyVars: CreateCompanyVariables = {
-  name: ..., 
-};
-
-// Call the `createCompany()` function to execute the mutation.
-// You can use the `await` keyword to wait for the promise to resolve.
-const { data } = await createCompany(createCompanyVars);
-// Variables can be defined inline as well.
-const { data } = await createCompany({ name: ..., });
-
-// You can also pass in a `DataConnect` instance to the action shortcut function.
-const dataConnect = getDataConnect(connectorConfig);
-const { data } = await createCompany(dataConnect, createCompanyVars);
-
-console.log(data.company_insert);
-
-// Or, you can use the `Promise` API.
-createCompany(createCompanyVars).then((response) => {
-  const data = response.data;
-  console.log(data.company_insert);
-});
-```
-
-### Using `CreateCompany`'s `MutationRef` function
-
-```typescript
-import { getDataConnect, executeMutation } from 'firebase/data-connect';
-import { connectorConfig, createCompanyRef, CreateCompanyVariables } from '@dataconnect/generated';
-
-// The `CreateCompany` mutation requires an argument of type `CreateCompanyVariables`:
-const createCompanyVars: CreateCompanyVariables = {
-  name: ..., 
-};
-
-// Call the `createCompanyRef()` function to get a reference to the mutation.
-const ref = createCompanyRef(createCompanyVars);
-// Variables can be defined inline as well.
-const ref = createCompanyRef({ name: ..., });
-
-// You can also pass in a `DataConnect` instance to the `MutationRef` function.
-const dataConnect = getDataConnect(connectorConfig);
-const ref = createCompanyRef(dataConnect, createCompanyVars);
-
-// Call `executeMutation()` on the reference to execute the mutation.
-// You can use the `await` keyword to wait for the promise to resolve.
-const { data } = await executeMutation(ref);
-
-console.log(data.company_insert);
-
-// Or, you can use the `Promise` API.
-executeMutation(ref).then((response) => {
-  const data = response.data;
-  console.log(data.company_insert);
-});
-```
-
 ## CreateJob
 You can execute the `CreateJob` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
@@ -322,7 +206,7 @@ The `CreateJob` mutation requires an argument of type `CreateJobVariables`, whic
 export interface CreateJobVariables {
   title: string;
   status: string;
-  companyId: UUIDString;
+  salary?: string | null;
 }
 ```
 ### Return Type
@@ -344,14 +228,14 @@ import { connectorConfig, createJob, CreateJobVariables } from '@dataconnect/gen
 const createJobVars: CreateJobVariables = {
   title: ..., 
   status: ..., 
-  companyId: ..., 
+  salary: ..., // optional
 };
 
 // Call the `createJob()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createJob(createJobVars);
 // Variables can be defined inline as well.
-const { data } = await createJob({ title: ..., status: ..., companyId: ..., });
+const { data } = await createJob({ title: ..., status: ..., salary: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -376,13 +260,13 @@ import { connectorConfig, createJobRef, CreateJobVariables } from '@dataconnect/
 const createJobVars: CreateJobVariables = {
   title: ..., 
   status: ..., 
-  companyId: ..., 
+  salary: ..., // optional
 };
 
 // Call the `createJobRef()` function to get a reference to the mutation.
 const ref = createJobRef(createJobVars);
 // Variables can be defined inline as well.
-const ref = createJobRef({ title: ..., status: ..., companyId: ..., });
+const ref = createJobRef({ title: ..., status: ..., salary: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -398,6 +282,227 @@ console.log(data.job_insert);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.job_insert);
+});
+```
+
+## UpdateJobStatus
+You can execute the `UpdateJobStatus` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+updateJobStatus(vars: UpdateJobStatusVariables): MutationPromise<UpdateJobStatusData, UpdateJobStatusVariables>;
+
+interface UpdateJobStatusRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateJobStatusVariables): MutationRef<UpdateJobStatusData, UpdateJobStatusVariables>;
+}
+export const updateJobStatusRef: UpdateJobStatusRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+updateJobStatus(dc: DataConnect, vars: UpdateJobStatusVariables): MutationPromise<UpdateJobStatusData, UpdateJobStatusVariables>;
+
+interface UpdateJobStatusRef {
+  ...
+  (dc: DataConnect, vars: UpdateJobStatusVariables): MutationRef<UpdateJobStatusData, UpdateJobStatusVariables>;
+}
+export const updateJobStatusRef: UpdateJobStatusRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the updateJobStatusRef:
+```typescript
+const name = updateJobStatusRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `UpdateJobStatus` mutation requires an argument of type `UpdateJobStatusVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface UpdateJobStatusVariables {
+  id: UUIDString;
+  status: string;
+}
+```
+### Return Type
+Recall that executing the `UpdateJobStatus` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `UpdateJobStatusData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface UpdateJobStatusData {
+  job_update?: Job_Key | null;
+}
+```
+### Using `UpdateJobStatus`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, updateJobStatus, UpdateJobStatusVariables } from '@dataconnect/generated';
+
+// The `UpdateJobStatus` mutation requires an argument of type `UpdateJobStatusVariables`:
+const updateJobStatusVars: UpdateJobStatusVariables = {
+  id: ..., 
+  status: ..., 
+};
+
+// Call the `updateJobStatus()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await updateJobStatus(updateJobStatusVars);
+// Variables can be defined inline as well.
+const { data } = await updateJobStatus({ id: ..., status: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await updateJobStatus(dataConnect, updateJobStatusVars);
+
+console.log(data.job_update);
+
+// Or, you can use the `Promise` API.
+updateJobStatus(updateJobStatusVars).then((response) => {
+  const data = response.data;
+  console.log(data.job_update);
+});
+```
+
+### Using `UpdateJobStatus`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, updateJobStatusRef, UpdateJobStatusVariables } from '@dataconnect/generated';
+
+// The `UpdateJobStatus` mutation requires an argument of type `UpdateJobStatusVariables`:
+const updateJobStatusVars: UpdateJobStatusVariables = {
+  id: ..., 
+  status: ..., 
+};
+
+// Call the `updateJobStatusRef()` function to get a reference to the mutation.
+const ref = updateJobStatusRef(updateJobStatusVars);
+// Variables can be defined inline as well.
+const ref = updateJobStatusRef({ id: ..., status: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = updateJobStatusRef(dataConnect, updateJobStatusVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.job_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.job_update);
+});
+```
+
+## DeleteJob
+You can execute the `DeleteJob` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+deleteJob(vars: DeleteJobVariables): MutationPromise<DeleteJobData, DeleteJobVariables>;
+
+interface DeleteJobRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteJobVariables): MutationRef<DeleteJobData, DeleteJobVariables>;
+}
+export const deleteJobRef: DeleteJobRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+deleteJob(dc: DataConnect, vars: DeleteJobVariables): MutationPromise<DeleteJobData, DeleteJobVariables>;
+
+interface DeleteJobRef {
+  ...
+  (dc: DataConnect, vars: DeleteJobVariables): MutationRef<DeleteJobData, DeleteJobVariables>;
+}
+export const deleteJobRef: DeleteJobRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the deleteJobRef:
+```typescript
+const name = deleteJobRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `DeleteJob` mutation requires an argument of type `DeleteJobVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface DeleteJobVariables {
+  id: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `DeleteJob` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `DeleteJobData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface DeleteJobData {
+  job_delete?: Job_Key | null;
+}
+```
+### Using `DeleteJob`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, deleteJob, DeleteJobVariables } from '@dataconnect/generated';
+
+// The `DeleteJob` mutation requires an argument of type `DeleteJobVariables`:
+const deleteJobVars: DeleteJobVariables = {
+  id: ..., 
+};
+
+// Call the `deleteJob()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await deleteJob(deleteJobVars);
+// Variables can be defined inline as well.
+const { data } = await deleteJob({ id: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await deleteJob(dataConnect, deleteJobVars);
+
+console.log(data.job_delete);
+
+// Or, you can use the `Promise` API.
+deleteJob(deleteJobVars).then((response) => {
+  const data = response.data;
+  console.log(data.job_delete);
+});
+```
+
+### Using `DeleteJob`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, deleteJobRef, DeleteJobVariables } from '@dataconnect/generated';
+
+// The `DeleteJob` mutation requires an argument of type `DeleteJobVariables`:
+const deleteJobVars: DeleteJobVariables = {
+  id: ..., 
+};
+
+// Call the `deleteJobRef()` function to get a reference to the mutation.
+const ref = deleteJobRef(deleteJobVars);
+// Variables can be defined inline as well.
+const ref = deleteJobRef({ id: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = deleteJobRef(dataConnect, deleteJobVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.job_delete);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.job_delete);
 });
 ```
 
