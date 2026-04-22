@@ -1,0 +1,28 @@
+query ListJobs @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  jobs {
+    id
+    title
+    status
+    salary
+  }
+}
+
+mutation CreateJob(
+  $title: String!
+  $status: String!
+  $salary: String
+) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  job_insert(data: {
+    title: $title
+    status: $status
+    salary: $salary
+  })
+}
+
+mutation UpdateJobStatus($id: UUID!, $status: String!) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  job_update(id: $id, data: { status: $status })
+}
+
+mutation DeleteJob($id: UUID!) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  job_delete(id: $id)
+}
