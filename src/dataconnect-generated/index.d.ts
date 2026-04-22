@@ -53,6 +53,10 @@ export interface ListJobsData {
   } & Job_Key)[];
 }
 
+export interface UpdateJobData {
+  job_update?: Job_Key | null;
+}
+
 export interface UpdateJobStatusData {
   job_update?: Job_Key | null;
 }
@@ -60,6 +64,13 @@ export interface UpdateJobStatusData {
 export interface UpdateJobStatusVariables {
   id: UUIDString;
   status: string;
+}
+
+export interface UpdateJobVariables {
+  id: UUIDString;
+  title: string;
+  status: string;
+  salary?: string | null;
 }
 
 interface ListJobsRef {
@@ -109,4 +120,16 @@ export const deleteJobRef: DeleteJobRef;
 
 export function deleteJob(vars: DeleteJobVariables): MutationPromise<DeleteJobData, DeleteJobVariables>;
 export function deleteJob(dc: DataConnect, vars: DeleteJobVariables): MutationPromise<DeleteJobData, DeleteJobVariables>;
+
+interface UpdateJobRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateJobVariables): MutationRef<UpdateJobData, UpdateJobVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateJobVariables): MutationRef<UpdateJobData, UpdateJobVariables>;
+  operationName: string;
+}
+export const updateJobRef: UpdateJobRef;
+
+export function updateJob(vars: UpdateJobVariables): MutationPromise<UpdateJobData, UpdateJobVariables>;
+export function updateJob(dc: DataConnect, vars: UpdateJobVariables): MutationPromise<UpdateJobData, UpdateJobVariables>;
 

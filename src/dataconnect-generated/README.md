@@ -13,6 +13,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*CreateJob*](#createjob)
   - [*UpdateJobStatus*](#updatejobstatus)
   - [*DeleteJob*](#deletejob)
+  - [*UpdateJob*](#updatejob)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `example`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -503,6 +504,124 @@ console.log(data.job_delete);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.job_delete);
+});
+```
+
+## UpdateJob
+You can execute the `UpdateJob` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+updateJob(vars: UpdateJobVariables): MutationPromise<UpdateJobData, UpdateJobVariables>;
+
+interface UpdateJobRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateJobVariables): MutationRef<UpdateJobData, UpdateJobVariables>;
+}
+export const updateJobRef: UpdateJobRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+updateJob(dc: DataConnect, vars: UpdateJobVariables): MutationPromise<UpdateJobData, UpdateJobVariables>;
+
+interface UpdateJobRef {
+  ...
+  (dc: DataConnect, vars: UpdateJobVariables): MutationRef<UpdateJobData, UpdateJobVariables>;
+}
+export const updateJobRef: UpdateJobRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the updateJobRef:
+```typescript
+const name = updateJobRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `UpdateJob` mutation requires an argument of type `UpdateJobVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface UpdateJobVariables {
+  id: UUIDString;
+  title: string;
+  status: string;
+  salary?: string | null;
+}
+```
+### Return Type
+Recall that executing the `UpdateJob` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `UpdateJobData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface UpdateJobData {
+  job_update?: Job_Key | null;
+}
+```
+### Using `UpdateJob`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, updateJob, UpdateJobVariables } from '@dataconnect/generated';
+
+// The `UpdateJob` mutation requires an argument of type `UpdateJobVariables`:
+const updateJobVars: UpdateJobVariables = {
+  id: ..., 
+  title: ..., 
+  status: ..., 
+  salary: ..., // optional
+};
+
+// Call the `updateJob()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await updateJob(updateJobVars);
+// Variables can be defined inline as well.
+const { data } = await updateJob({ id: ..., title: ..., status: ..., salary: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await updateJob(dataConnect, updateJobVars);
+
+console.log(data.job_update);
+
+// Or, you can use the `Promise` API.
+updateJob(updateJobVars).then((response) => {
+  const data = response.data;
+  console.log(data.job_update);
+});
+```
+
+### Using `UpdateJob`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, updateJobRef, UpdateJobVariables } from '@dataconnect/generated';
+
+// The `UpdateJob` mutation requires an argument of type `UpdateJobVariables`:
+const updateJobVars: UpdateJobVariables = {
+  id: ..., 
+  title: ..., 
+  status: ..., 
+  salary: ..., // optional
+};
+
+// Call the `updateJobRef()` function to get a reference to the mutation.
+const ref = updateJobRef(updateJobVars);
+// Variables can be defined inline as well.
+const ref = updateJobRef({ id: ..., title: ..., status: ..., salary: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = updateJobRef(dataConnect, updateJobVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.job_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.job_update);
 });
 ```
 
