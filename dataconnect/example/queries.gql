@@ -26,3 +26,7 @@ mutation UpdateJobStatus($id: UUID!, $status: String!) @auth(level: PUBLIC, inse
 mutation DeleteJob($id: UUID!) @auth(level: PUBLIC, insecureReason: "Local testing only") {
   job_delete(id: $id)
 }
+
+mutation UpdateJob($id: UUID!, $title: String!, $status: String!, $salary: String) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  job_update(id: $id, data: { title: $title, status: $status, salary: $salary })
+}

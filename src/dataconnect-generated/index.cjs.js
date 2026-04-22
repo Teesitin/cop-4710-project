@@ -69,3 +69,17 @@ exports.deleteJob = function deleteJob(dcOrVars, vars) {
   return executeMutation(deleteJobRef(dcInstance, inputVars));
 }
 ;
+
+const updateJobRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateJob', inputVars);
+}
+updateJobRef.operationName = 'UpdateJob';
+exports.updateJobRef = updateJobRef;
+
+exports.updateJob = function updateJob(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateJobRef(dcInstance, inputVars));
+}
+;
