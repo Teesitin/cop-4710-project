@@ -16,3 +16,11 @@ type Application @table {
     status: String!
     appliedDate: Date!
 }
+
+type Employee @table {
+    name: String!
+    email: String!
+    role: String!
+    job: Job!
+    originalApplication: Application!
+}

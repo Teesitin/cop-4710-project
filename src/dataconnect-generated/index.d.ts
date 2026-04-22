@@ -39,9 +39,23 @@ export interface DeleteJobVariables {
   id: UUIDString;
 }
 
+export interface Employee_Key {
+  id: UUIDString;
+  __typename?: 'Employee_Key';
+}
+
 export interface Job_Key {
   id: UUIDString;
   __typename?: 'Job_Key';
+}
+
+export interface ListEmployeesData {
+  employees: ({
+    id: UUIDString;
+    name: string;
+    email: string;
+    role: string;
+  } & Employee_Key)[];
 }
 
 export interface ListJobsData {
@@ -132,4 +146,16 @@ export const updateJobRef: UpdateJobRef;
 
 export function updateJob(vars: UpdateJobVariables): MutationPromise<UpdateJobData, UpdateJobVariables>;
 export function updateJob(dc: DataConnect, vars: UpdateJobVariables): MutationPromise<UpdateJobData, UpdateJobVariables>;
+
+interface ListEmployeesRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListEmployeesData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListEmployeesData, undefined>;
+  operationName: string;
+}
+export const listEmployeesRef: ListEmployeesRef;
+
+export function listEmployees(options?: ExecuteQueryOptions): QueryPromise<ListEmployeesData, undefined>;
+export function listEmployees(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListEmployeesData, undefined>;
 

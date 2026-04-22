@@ -71,3 +71,16 @@ export function updateJob(dcOrVars, vars) {
   return executeMutation(updateJobRef(dcInstance, inputVars));
 }
 
+export const listEmployeesRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListEmployees');
+}
+listEmployeesRef.operationName = 'ListEmployees';
+
+export function listEmployees(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listEmployeesRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+

@@ -18,12 +18,10 @@
 
 <svelte:head><link rel="icon" href="/techbro-logo-fav.png" /></svelte:head>
 
-<div class="flex h-screen">
-    <!-- Sidebar -->
-	<Sidebar/>
+<div class="flex min-h-screen">
+	<Sidebar />
 
-    <!-- Content -->
-    <div class="flex-1">
-        {@render children()}
-    </div>
+	<div class="flex-1">
+		{@render children()}
+	</div>
 </div>
