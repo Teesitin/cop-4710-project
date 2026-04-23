@@ -1,18 +1,27 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
     import '../app.css';
     import Sidebar from '$lib/assets/menu/Sidebar.svelte';
 
-	let { children } = $props();
+    let { children } = $props();
+
+    onMount(() => {
+        const theme = localStorage.getItem('theme');
+
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    });
 </script>
 
 <svelte:head><link rel="icon" href="/techbro-logo-fav.png" /></svelte:head>
 
-<div class="flex h-screen">
-    <!-- Sidebar -->
-	<Sidebar/>
+<div class="flex min-h-screen">
+	<Sidebar />
 
-    <!-- Content -->
-    <div class="flex-1 p-6 bg-gray-100">
-        {@render children()}
-    </div>
+	<div class="flex-1">
+		{@render children()}
+	</div>
 </div>

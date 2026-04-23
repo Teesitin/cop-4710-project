@@ -5,6 +5,10 @@
     ];
 </script>
 
+<svelte:head>
+    <title>Jobs</title>
+</svelte:head>
+
 <table class="min-w-full border border-gray-300">
     <thead class="bg-gray-900 text-white">
         <tr>
