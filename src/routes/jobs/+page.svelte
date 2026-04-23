@@ -2,11 +2,10 @@
     import { onMount } from 'svelte';
     import { initializeApp } from 'firebase/app';
     import { getDataConnect, executeQuery, executeMutation } from 'firebase/data-connect';
-    import AddJob from '$lib/assets/forms/AddJob.svelte';
+    import AddJob from '$lib/assets/forms/AddJob.svelte';  
 
     import {
         listJobsRef,
-        createJobRef,
         deleteJobRef,
         updateJobStatusRef,
         updateJobRef,
@@ -27,15 +26,11 @@
     };
 
     let loading = $state(true);
-    let saving = $state(false);
     let error = $state('');
-    let formError = $state('');
     let jobs = $state<JobRow[]>([]);
 
-    // Add Job Form State
-    let jobTitle = $state('');
-    let jobSalary = $state('');
-    let jobStatus = $state('Open');
+    // --- NEW: Modal State ---
+    let showAddModal = $state(false);
 
     // Inline Edit State
     let editingId = $state<string | null>(null);
@@ -43,21 +38,14 @@
     let editSalary = $state('');
     let editStatus = $state('Open');
 
-    // --- NEW: Search & Sorting State ---
+    // Search & Sorting State 
     let searchQuery = $state('');
-<<<<<<< Updated upstream
-    let filteredJobs = $derived(
-        jobs.filter(job => job.title.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
-=======
     
-    // Track which column is being sorted and in what direction
     type SortColumn = 'title' | 'salary' | 'status' | null;
     type SortDirection = 'asc' | 'desc' | 'default';
     let sortColumn = $state<SortColumn>(null);
     let sortDirection = $state<SortDirection>('default');
 
-    // Cycle through: Default -> Ascending -> Descending -> Default
     function toggleSort(col: SortColumn) {
         if (sortColumn === col) {
             if (sortDirection === 'default') sortDirection = 'asc';
@@ -68,7 +56,6 @@
             sortDirection = 'asc';
         }
         
-        // Reset column tracker if we are back to default
         if (sortDirection === 'default') {
             sortColumn = null;
         }
@@ -83,13 +70,13 @@
             return matchTitle || matchSalary;
         });
 
-        // 2. SORTING (Runs only if a column is clicked and not on 'default')
+        // 2. SORTING 
         if (sortColumn && sortDirection !== 'default') {
             result.sort((a, b) => {
-                const valA = (a[sortColumn] || '').toLowerCase();
-                const valB = (b[sortColumn] || '').toLowerCase();
+                const col = sortColumn as Exclude<SortColumn, null>;
+                const valA = String(a[col] ?? '').toLowerCase();
+                const valB = String(b[col] ?? '').toLowerCase();
 
-                // NEW: Only use numeric sorting if they clicked the Salary column!
                 const isNumericCol = sortColumn === 'salary';
 
                 if (sortDirection === 'asc') {
@@ -102,7 +89,6 @@
 
         return result;
     });
->>>>>>> Stashed changes
 
     const statuses = ['Open', 'Interviewing', 'Filled', 'Closed'];
 
@@ -111,7 +97,6 @@
             loading = true;
             error = '';
             const result = await executeQuery(listJobsRef());
-            // REVERSE the array so newest jobs stay at the top (This is our 'default' sort!)
             jobs = result.data.jobs ? [...result.data.jobs].reverse() : [];
         } catch (err) {
             console.error('loadJobs error:', err);
@@ -121,49 +106,10 @@
         }
     }
 
-    async function handleSubmit() {
-        formError = '';
-
-        if (!jobTitle.trim()) {
-            formError = 'Job title is required.';
-            return;
-        }
-
-        try {
-            saving = true;
-
-            const jobTitleValue = jobTitle.trim();
-            const jobSalaryValue = jobSalary.trim();
-
-            const createJobResult = await executeMutation(
-                createJobRef({
-                    title: jobTitleValue,
-                    status: jobStatus,
-                    salary: jobSalaryValue || null
-                })
-            );
-
-            const jobId = createJobResult.data.job_insert.id;
-
-            jobs = [
-                {
-                    id: jobId,
-                    title: jobTitleValue,
-                    status: jobStatus,
-                    salary: jobSalaryValue
-                },
-                ...jobs
-            ];
-
-            jobTitle = '';
-            jobSalary = '';
-            jobStatus = 'Open';
-        } catch (err) {
-            console.error('handleSubmit error:', err);
-            formError = 'Failed to create job.';
-        } finally {
-            saving = false;
-        }
+    // --- Triggered by the AddJob component when a job saves ---
+    function handleJobAdded(newJob: JobRow) {
+        jobs = [newJob, ...jobs]; // Put new job at the top of the list
+        showAddModal = false;     // Close the modal
     }
 
     // --- FULL EDITING FUNCTIONS ---
@@ -197,7 +143,6 @@
                 status: editStatus
             }));
 
-            // Update the local array without moving the row
             const index = jobs.findIndex(j => j.id === jobId);
             if (index !== -1) {
                 jobs[index] = { 
@@ -207,7 +152,7 @@
                     status: editStatus 
                 };
             }
-            editingId = null; // Close the edit mode
+            editingId = null; 
         } catch (err) {
             console.error("Failed to update job", err);
             alert("Could not update job. Check console.");
@@ -247,55 +192,30 @@
 </svelte:head>
 
 <section class="mx-auto max-w-5xl p-10 space-y-10">
-    <div class="mb-8">
+    <div class="mb-2">
         <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Job Tracker</h1>
         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage available jobs</p>
     </div>
 
-    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-6 shadow rounded-2xl">
-        <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Add Job</h2>
-
-        <div class="grid gap-4 md:grid-cols-3">
-            <div>
-                <label for="jobTitle" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Job Title *</label>
-                <input id="jobTitle" bind:value={jobTitle} class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm text-gray-900 dark:text-white outline-none transition focus:border-blue-500" placeholder="e.g. Software Engineer" />
-            </div>
-
-            <div>
-                <label for="jobSalary" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Salary</label>
-                <input id="jobSalary" bind:value={jobSalary} class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm text-gray-900 dark:text-white outline-none transition focus:border-blue-500" placeholder="e.g. $90k - $110k" />
-            </div>
-
-            <div>
-                <label for="jobStatus" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
-                <select id="jobStatus" bind:value={jobStatus} class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm text-gray-900 dark:text-white outline-none transition focus:border-blue-500">
-                    {#each statuses as status}
-                        <option value={status}>{status}</option>
-                    {/each}
-                </select>
-            </div>
-        </div>
-
-        {#if formError}
-            <div class="mt-4 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400">{formError}</div>
-        {/if}
-
-        <div class="mt-4">
-            <button type="button" onclick={handleSubmit} disabled={saving} class="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60">
-                {#if saving} Saving... {:else} Add Job {/if}
-            </button>
-        </div>
-    </div>
-
-    <div class="mb-4 flex items-center justify-between">
+    <div class="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Jobs Database</h2>
-        <div class="w-64">
-            <input
-                type="text"
-                bind:value={searchQuery}
-                placeholder="Search jobs & salaries..."
-                class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm text-gray-900 dark:text-white outline-none transition focus:border-blue-500"
-            />
+        
+        <div class="flex items-center space-x-4 w-full sm:w-auto">
+            <div class="w-full sm:w-64">
+                <input
+                    type="text"
+                    bind:value={searchQuery}
+                    placeholder="Search jobs & salaries..."
+                    class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm text-gray-900 dark:text-white outline-none transition focus:border-blue-500"
+                />
+            </div>
+            
+            <button 
+                onclick={() => showAddModal = true}
+                class="whitespace-nowrap rounded-xl bg-blue-600 px-5 py-2 text-sm font-bold text-white transition hover:bg-blue-700 shadow-sm"
+            >
+                + Add Job
+            </button>
         </div>    
     </div>
 
@@ -307,7 +227,7 @@
         <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
             <p class="text-sm text-gray-600 dark:text-gray-400">
                 {#if jobs.length === 0}
-                    No jobs found. Add one above!
+                    No jobs found. Click "+ Add Job" to get started!
                 {:else}
                     No jobs match your search.
                 {/if}
@@ -402,3 +322,19 @@
         </div>
     {/if}
 </section>
+
+{#if showAddModal}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div 
+        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 p-4 backdrop-blur-sm transition-opacity"
+        onclick={(e) => { if (e.target === e.currentTarget) showAddModal = false; }}
+    >
+        <div class="w-full max-w-lg rounded-2xl bg-white p-8 shadow-2xl dark:bg-gray-800 dark:border dark:border-gray-700">
+            <AddJob 
+                onClose={() => showAddModal = false} 
+                onSuccess={handleJobAdded} 
+            />
+        </div>
+    </div>
+{/if}
