@@ -5,15 +5,15 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  dataconnect-generated: link:../../../AppData/Local/pnpm/global/5/node_modules/src/dataconnect-generated
+  dataconnect-generated: link:../../Users/Teesitin/AppData/Local/pnpm/global/5/node_modules/src/dataconnect-generated
 
 importers:
 
   .:
     dependencies:
       dataconnect-generated:
-        specifier: link:../../AppData/Local/pnpm/global/5/node_modules/src/dataconnect-generated
-        version: link:../../AppData/Local/pnpm/global/5/node_modules/src/dataconnect-generated
+        specifier: link:../../Users/Teesitin/AppData/Local/pnpm/global/5/node_modules/src/dataconnect-generated
+        version: link:../../Users/Teesitin/AppData/Local/pnpm/global/5/node_modules/src/dataconnect-generated
       firebase:
         specifier: ^12.11.0
         version: 12.11.0
