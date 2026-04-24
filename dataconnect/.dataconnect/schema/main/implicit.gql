@@ -18,13 +18,33 @@ extend type Application {
   """
   jobId: UUID! @fdc_generated(from: "Application.job", purpose: IMPLICIT_REF_FIELD)
 }
+extend type Employee {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Employee", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Employee`.`job`. It must match the value of `Job`.`id`. See `@ref` for how to customize it.
+  """
+  jobId: UUID! @fdc_generated(from: "Employee.job", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Employee`.`originalApplication`. It must match the value of `Application`.`id`. See `@ref` for how to customize it.
+  """
+  originalApplicationId: UUID! @fdc_generated(from: "Employee.originalApplication", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Interview {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Interview", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Interview`.`application`. It must match the value of `Application`.`id`. See `@ref` for how to customize it.
+  """
+  applicationId: UUID! @fdc_generated(from: "Interview.application", purpose: IMPLICIT_REF_FIELD)
+}
 extend type Job {
   """
   ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
   """
   id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Job", purpose: IMPLICIT_KEY_FIELD)
-  """
-  ✨ Implicit foreign key field based on `Job`.`applicant`. It must match the value of `Applicant`.`id`. See `@ref` for how to customize it.
-  """
-  applicantId: UUID! @fdc_generated(from: "Job.applicant", purpose: IMPLICIT_REF_FIELD)
 }

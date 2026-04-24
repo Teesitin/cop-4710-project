@@ -18,6 +18,24 @@ extend type Mutation {
     data: Application_Data!
   ): Application_KeyOutput! @fdc_generated(from: "Application", purpose: INSERT_SINGLE)
   """
+  ✨ Insert a single `Employee` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  employee_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Employee_Data!
+  ): Employee_KeyOutput! @fdc_generated(from: "Employee", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Interview` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  interview_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Interview_Data!
+  ): Interview_KeyOutput! @fdc_generated(from: "Interview", purpose: INSERT_SINGLE)
+  """
   ✨ Insert a single `Job` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   job_insert(
@@ -44,6 +62,24 @@ extend type Mutation {
     """
     data: [Application_Data!]!
   ): [Application_KeyOutput!]! @fdc_generated(from: "Application", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Employee` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  employee_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Employee_Data!]!
+  ): [Employee_KeyOutput!]! @fdc_generated(from: "Employee", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Interview` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  interview_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Interview_Data!]!
+  ): [Interview_KeyOutput!]! @fdc_generated(from: "Interview", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `Job` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -72,6 +108,24 @@ extend type Mutation {
     data: Application_Data!
   ): Application_KeyOutput! @fdc_generated(from: "Application", purpose: UPSERT_SINGLE)
   """
+  ✨ Insert or update a single `Employee` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Employee`.
+  """
+  employee_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Employee_Data!
+  ): Employee_KeyOutput! @fdc_generated(from: "Employee", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Interview` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Interview`.
+  """
+  interview_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Interview_Data!
+  ): Interview_KeyOutput! @fdc_generated(from: "Interview", purpose: UPSERT_SINGLE)
+  """
   ✨ Insert or update a single `Job` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Job`.
   """
   job_upsert(
@@ -98,6 +152,24 @@ extend type Mutation {
     """
     data: [Application_Data!]!
   ): [Application_KeyOutput!]! @fdc_generated(from: "Application", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Employee` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Employee`.
+  """
+  employee_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Employee_Data!]!
+  ): [Employee_KeyOutput!]! @fdc_generated(from: "Employee", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Interview` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Interview`.
+  """
+  interview_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Interview_Data!]!
+  ): [Interview_KeyOutput!]! @fdc_generated(from: "Interview", purpose: UPSERT_MULTIPLE)
   """
   ✨ Insert or update `Job` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Job`.
   """
@@ -155,6 +227,54 @@ extend type Mutation {
     """
     data: Application_Data!
   ): Application_KeyOutput @fdc_generated(from: "Application", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Employee` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Employee` or `null` if not found.
+  """
+  employee_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Employee_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Employee_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Employee_Data!
+  ): Employee_KeyOutput @fdc_generated(from: "Employee", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Interview` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Interview` or `null` if not found.
+  """
+  interview_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Interview_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Interview_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Interview_Data!
+  ): Interview_KeyOutput @fdc_generated(from: "Interview", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `Job` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Job` or `null` if not found.
   """
@@ -218,6 +338,44 @@ extend type Mutation {
     data: Application_Data!
   ): Int! @fdc_generated(from: "Application", purpose: UPDATE_MULTIPLE)
   """
+  ✨ Update `Employee` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  employee_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Employee_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Employee_Data!
+  ): Int! @fdc_generated(from: "Employee", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Interview` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  interview_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Interview_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Interview_Data!
+  ): Int! @fdc_generated(from: "Interview", purpose: UPDATE_MULTIPLE)
+  """
   ✨ Update `Job` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   job_updateMany(
@@ -275,6 +433,44 @@ extend type Mutation {
     first: Application_FirstRow
   ): Application_KeyOutput @fdc_generated(from: "Application", purpose: DELETE_SINGLE)
   """
+  ✨ Delete a single `Employee` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  employee_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Employee_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Employee_FirstRow
+  ): Employee_KeyOutput @fdc_generated(from: "Employee", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Interview` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  interview_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Interview_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Interview_FirstRow
+  ): Interview_KeyOutput @fdc_generated(from: "Interview", purpose: DELETE_SINGLE)
+  """
   ✨ Delete a single `Job` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
   job_delete(
@@ -321,6 +517,34 @@ extend type Mutation {
     """
     all: Boolean = false
   ): Int! @fdc_generated(from: "Application", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Employee` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  employee_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Employee_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Employee", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Interview` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  interview_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Interview_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Interview", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `Job` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """

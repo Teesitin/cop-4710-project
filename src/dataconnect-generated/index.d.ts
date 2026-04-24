@@ -44,6 +44,11 @@ export interface Employee_Key {
   __typename?: 'Employee_Key';
 }
 
+export interface Interview_Key {
+  id: UUIDString;
+  __typename?: 'Interview_Key';
+}
+
 export interface Job_Key {
   id: UUIDString;
   __typename?: 'Job_Key';
