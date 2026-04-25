@@ -1,10 +1,10 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { executeMutation, executeQuery } from 'firebase/data-connect';
+    import '$lib/firebase';
 
     import {
         createApplication,
-        listJobsRef
+        listJobs
     } from '../../../dataconnect-generated';
 
     let { close, success } = $props<{
@@ -33,7 +33,9 @@
     let formError = $state('');
 
     let openJobs = $derived.by(() => {
-        return jobs.filter((job) => job.status.trim().toLowerCase() === 'open');
+        return jobs.filter((job) => {
+            return String(job.status ?? '').trim().toLowerCase() === 'open';
+        });
     });
 
     let selectedJob = $derived.by(() => {
@@ -64,9 +66,8 @@
             loading = true;
             formError = '';
 
-            const result = await executeQuery(listJobsRef());
+            const result = await listJobs();
             jobs = result.data.jobs ?? [];
-
         } catch (err) {
             console.error('loadJobs error:', err);
             formError = 'Failed to load jobs.';
@@ -78,12 +79,17 @@
     async function handleSubmit() {
         formError = '';
 
-        if (!name.trim()) {
+        const nameValue = String(name ?? '').trim();
+        const emailValue = String(email ?? '').trim();
+        const appliedDateValue = String(appliedDate ?? '').trim();
+        const salaryText = String(salaryProposed ?? '').trim();
+
+        if (!nameValue) {
             formError = 'Name is required.';
             return;
         }
 
-        if (!email.trim()) {
+        if (!emailValue) {
             formError = 'Email is required.';
             return;
         }
@@ -93,42 +99,40 @@
             return;
         }
 
-        if (!appliedDate) {
+        if (!appliedDateValue) {
             formError = 'Applied date is required.';
+            return;
+        }
+
+        const salaryValue = salaryText ? Number(salaryText) : null;
+
+        if (salaryText && Number.isNaN(salaryValue)) {
+            formError = 'Salary must be a valid number.';
             return;
         }
 
         try {
             saving = true;
 
-            const nameValue = name.trim();
-            const emailValue = email.trim();
-            const salaryValue = salaryProposed.trim()
-                ? Number(salaryProposed)
-                : null;
-
-            const createApplicationResult = await executeMutation(
-                createApplication({
-                    name: nameValue,
-                    email: emailValue,
-                    jobId: selectedJob.id,
-                    salaryProposed: salaryValue,
-                    status,
-                    appliedDate
-                })
-            );
+            await createApplication({
+                name: nameValue,
+                email: emailValue,
+                jobId: selectedJob.id,
+                salaryProposed: salaryValue,
+                status,
+                appliedDate: appliedDateValue
+            });
 
             success({
-                id: createApplicationResult.data.application_insert.id,
+                id: crypto.randomUUID(),
                 name: nameValue,
                 email: emailValue,
                 jobId: selectedJob.id,
                 job: selectedJob,
                 salaryProposed: salaryValue,
                 status,
-                appliedDate
+                appliedDate: appliedDateValue
             });
-
         } catch (err) {
             console.error('handleSubmit error:', err);
             formError = 'Failed to create application.';

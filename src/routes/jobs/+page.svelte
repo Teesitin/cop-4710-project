@@ -1,22 +1,17 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { initializeApp } from 'firebase/app';
-    import { getDataConnect, executeQuery, executeMutation } from 'firebase/data-connect';
-    import AddJob from '$lib/assets/forms/AddJob.svelte';  
+    import '$lib/firebase';
+
+    import AddJob from '$lib/assets/forms/AddJob.svelte';
 
     import {
-        listJobsRef,
-        deleteJobRef,
-        updateJobStatusRef,
-        updateJobRef,
-        connectorConfig,
+        listJobs,
+        deleteJob,
+        updateJob,
+        updateJobStatus
     } from '../../dataconnect-generated';
 
-    const app = initializeApp({
-        projectId: 'cop-4710-ab900'
-    });
-
-    const dc = getDataConnect(connectorConfig);
+    import { notify } from '$lib/assets/components/notificationState.svelte';
 
     type JobRow = {
         id: string;
@@ -29,22 +24,22 @@
     let error = $state('');
     let jobs = $state<JobRow[]>([]);
 
-    // --- NEW: Modal State ---
     let showAddModal = $state(false);
 
-    // Inline Edit State
     let editingId = $state<string | null>(null);
     let editTitle = $state('');
     let editSalary = $state('');
     let editStatus = $state('Open');
 
-    // Search & Sorting State 
     let searchQuery = $state('');
-    
+
     type SortColumn = 'title' | 'salary' | 'status' | null;
     type SortDirection = 'asc' | 'desc' | 'default';
+
     let sortColumn = $state<SortColumn>(null);
     let sortDirection = $state<SortDirection>('default');
+
+    const statuses = ['Open', 'Interviewing', 'Filled', 'Closed'];
 
     function toggleSort(col: SortColumn) {
         if (sortColumn === col) {
@@ -55,140 +50,149 @@
             sortColumn = col;
             sortDirection = 'asc';
         }
-        
+
         if (sortDirection === 'default') {
             sortColumn = null;
         }
+
+        notify.info(`Sorting by ${col ?? 'default'} (${sortDirection})`);
     }
 
     let filteredJobs = $derived.by(() => {
-        // 1. FILTERING 
         let result = jobs.filter(job => {
             const query = searchQuery.toLowerCase();
-            const matchTitle = job.title.toLowerCase().includes(query);
-            const matchSalary = (job.salary || '').toLowerCase().includes(query);
-            return matchTitle || matchSalary;
+            return (
+                job.title.toLowerCase().includes(query) ||
+                String(job.salary ?? '').toLowerCase().includes(query)
+            );
         });
 
-        // 2. SORTING 
         if (sortColumn && sortDirection !== 'default') {
             result.sort((a, b) => {
-                const col = sortColumn as Exclude<SortColumn, null>;
-                const valA = String(a[col] ?? '').toLowerCase();
-                const valB = String(b[col] ?? '').toLowerCase();
+                const valA = String(a[sortColumn!] ?? '').toLowerCase();
+                const valB = String(b[sortColumn!] ?? '').toLowerCase();
 
-                const isNumericCol = sortColumn === 'salary';
+                const isNumeric = sortColumn === 'salary';
 
-                if (sortDirection === 'asc') {
-                    return valA.localeCompare(valB, undefined, { numeric: isNumericCol });
-                } else {
-                    return valB.localeCompare(valA, undefined, { numeric: isNumericCol });
-                }
+                return sortDirection === 'asc'
+                    ? valA.localeCompare(valB, undefined, { numeric: isNumeric })
+                    : valB.localeCompare(valA, undefined, { numeric: isNumeric });
             });
         }
 
         return result;
     });
 
-    const statuses = ['Open', 'Interviewing', 'Filled', 'Closed'];
-
     async function loadJobs() {
         try {
             loading = true;
             error = '';
-            const result = await executeQuery(listJobsRef());
+
+            const result = await listJobs();
             jobs = result.data.jobs ? [...result.data.jobs].reverse() : [];
+
+            notify.success('Jobs loaded.');
         } catch (err) {
             console.error('loadJobs error:', err);
-            error = 'Failed to load jobs from Data Connect.';
+            error = 'Failed to load jobs.';
+            notify.error('Failed to load jobs.');
         } finally {
             loading = false;
         }
     }
 
-    // --- Triggered by the AddJob component when a job saves ---
     function handleJobAdded(newJob: JobRow) {
-        jobs = [newJob, ...jobs]; // Put new job at the top of the list
-        showAddModal = false;     // Close the modal
+        jobs = [newJob, ...jobs];
+        showAddModal = false;
+        notify.success('Job created.');
     }
 
-    // --- FULL EDITING FUNCTIONS ---
     function startEditing(job: JobRow) {
         editingId = job.id;
         editTitle = job.title;
         editSalary = job.salary || '';
         editStatus = job.status;
+
+        notify.info(`Editing "${job.title}"`);
     }
 
     function cancelEditing() {
         editingId = null;
+        notify.info('Edit cancelled.');
     }
 
     async function saveEdit(jobId: string) {
-        if (!editTitle.trim()) {
-            alert("Title cannot be empty.");
+        const titleValue = String(editTitle ?? '').trim();
+        const salaryValue = String(editSalary ?? '').trim();
+
+        if (!titleValue) {
+            notify.warning('Title is required.');
             return;
         }
 
-        if (!confirm('Are you sure you want to save these changes?')) return;
-
         try {
-            const titleValue = editTitle.trim();
-            const salaryValue = editSalary.trim();
-
-            await executeMutation(updateJobRef({
+            await updateJob({
                 id: jobId,
                 title: titleValue,
                 salary: salaryValue || null,
                 status: editStatus
-            }));
+            });
 
-            const index = jobs.findIndex(j => j.id === jobId);
-            if (index !== -1) {
-                jobs[index] = { 
-                    ...jobs[index], 
-                    title: titleValue, 
-                    salary: salaryValue || null, 
-                    status: editStatus 
+            const i = jobs.findIndex(j => j.id === jobId);
+            if (i !== -1) {
+                jobs[i] = {
+                    ...jobs[i],
+                    title: titleValue,
+                    salary: salaryValue || null,
+                    status: editStatus
                 };
             }
-            editingId = null; 
+
+            editingId = null;
+            notify.success('Job updated.');
         } catch (err) {
-            console.error("Failed to update job", err);
-            alert("Could not update job. Check console.");
+            console.error(err);
+            notify.error('Failed to update job.');
         }
     }
 
     async function handleStatusChange(jobId: string, newStatus: string) {
         try {
-            await executeMutation(updateJobStatusRef({ id: jobId, status: newStatus }));
-            const jobIndex = jobs.findIndex(j => j.id === jobId);
-            if (jobIndex !== -1) jobs[jobIndex].status = newStatus;
+            await updateJobStatus({ id: jobId, status: newStatus });
+
+            jobs = jobs.map(j =>
+                j.id === jobId ? { ...j, status: newStatus } : j
+            );
+
+            notify.success(`Status updated to ${newStatus}.`);
         } catch (err) {
-            console.error("Failed to update status", err);
-            alert("Could not update status.");
+            console.error(err);
+            notify.error('Failed to update status.');
         }
     }
 
     async function handleDelete(jobId: string) {
-        if (!confirm('Are you sure you want to delete this job?')) return;
-        
+        if (!confirm('Delete this job?')) {
+            notify.info('Delete cancelled.');
+            return;
+        }
+
         try {
-            await executeMutation(deleteJobRef({ id: jobId }));
+            await deleteJob({ id: jobId });
             jobs = jobs.filter(j => j.id !== jobId);
+
+            notify.success('Job deleted.');
         } catch (err) {
-            console.error("Failed to delete job", err);
-            alert("Could not delete job.");
+            console.error(err);
+            notify.error('Failed to delete job.');
         }
     }
 
-    onMount(() => {
-        loadJobs();
-    });
+    onMount(loadJobs);
 </script>
 
 <svelte:head>
-    <title>Job Tracker</title>
+    <title>Jobs</title>
 </svelte:head>
 
 <section class="mx-auto max-w-5xl p-10 space-y-10">
@@ -268,7 +272,7 @@
                             {/if}
                         </th>
                         
-                        <th class="px-6 py-3 text-right text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
                             Actions
                         </th>
                     </tr>
@@ -276,7 +280,6 @@
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                     {#each filteredJobs as job (job.id)}
                         <tr class="transition hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                            
                             {#if editingId === job.id}
                                 <td class="px-4 py-3">
                                     <input bind:value={editTitle} class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1.5 text-sm text-gray-900 dark:text-white outline-none focus:border-blue-500" />
@@ -291,9 +294,18 @@
                                         {/each}
                                     </select>
                                 </td>
-                                <td class="whitespace-nowrap px-6 py-4 text-right space-x-3">
-                                    <button onclick={() => saveEdit(job.id)} class="text-sm font-semibold text-green-600 hover:text-green-500 transition">Save</button>
-                                    <button onclick={cancelEditing} class="text-sm font-medium text-gray-500 hover:text-gray-400 transition">Cancel</button>
+                                <td class="whitespace-nowrap px-6 py-4 flex gap-3">
+                                    <button onclick={() => saveEdit(job.id)}  class="border-2 border-green-500 hover:bg-green-100 dark:hover:bg-green-900 rounded w-7 h-7 flex items-center justify-center cursor-pointer" aria-label="edit-job">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="w-5 h-5 fill-green-500">
+                                            <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+                                        </svg>
+                                    </button>
+
+                                    <button onclick={cancelEditing} class="border-2 border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-900 rounded w-7 h-7 flex items-center justify-center cursor-pointer" aria-label="edit-job">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="w-5 h-5 fill-gray-500">
+                                            <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                                        </svg>
+                                    </button>
                                 </td>
                             {:else}
                                 <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{job.title}</td>
@@ -309,12 +321,20 @@
                                         {/each}
                                     </select>
                                 </td>
-                                <td class="whitespace-nowrap px-6 py-4 text-right space-x-3">
-                                    <button onclick={() => startEditing(job)} class="text-sm font-medium text-blue-500 hover:text-blue-400 transition">Edit</button>
-                                    <button onclick={() => handleDelete(job.id)} class="text-sm font-medium text-red-500 hover:text-red-400 transition">Delete</button>
+                                <td class="whitespace-nowrap px-6 py-4 flex gap-3">
+                                    <button onclick={() => startEditing(job)} class="border-2 border-blue-500 hover:bg-blue-100 dark:hover:bg-blue-900 rounded w-7 h-7 flex items-center justify-center cursor-pointer" aria-label="edit-job">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="w-5 h-5 fill-blue-500">
+                                            <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
+                                        </svg>
+                                    </button>
+
+                                    <button onclick={() => handleDelete(job.id)} class="border-2 border-red-500 hover:bg-red-100 dark:hover:bg-red-900 rounded w-7 h-7 flex items-center justify-center cursor-pointer" aria-label="edit-job">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="w-5 h-5 fill-red-500">
+                                            <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+                                        </svg>
+                                    </button>
                                 </td>
                             {/if}
-
                         </tr>
                     {/each}
                 </tbody>

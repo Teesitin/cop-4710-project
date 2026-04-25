@@ -1,6 +1,7 @@
-import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise } from 'firebase/data-connect';
+import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, ExecuteQueryOptions, MutationRef, MutationPromise, DataConnectSettings } from 'firebase/data-connect';
 
 export const connectorConfig: ConnectorConfig;
+export const dataConnectSettings: DataConnectSettings;
 
 export type TimestampString = string;
 export type UUIDString = string;
@@ -67,6 +68,14 @@ export interface DeleteApplicationData {
 }
 
 export interface DeleteApplicationVariables {
+  id: UUIDString;
+}
+
+export interface DeleteEmployeeData {
+  employee_delete?: Employee_Key | null;
+}
+
+export interface DeleteEmployeeVariables {
   id: UUIDString;
 }
 
@@ -216,6 +225,17 @@ export interface UpdateApplicationVariables {
   appliedDate: DateString;
 }
 
+export interface UpdateEmployeeData {
+  employee_update?: Employee_Key | null;
+}
+
+export interface UpdateEmployeeVariables {
+  id: UUIDString;
+  name: string;
+  email: string;
+  role: string;
+}
+
 export interface UpdateInterviewData {
   interview_update?: Interview_Key | null;
 }
@@ -257,8 +277,8 @@ interface ListJobsRef {
 }
 export const listJobsRef: ListJobsRef;
 
-export function listJobs(): QueryPromise<ListJobsData, undefined>;
-export function listJobs(dc: DataConnect): QueryPromise<ListJobsData, undefined>;
+export function listJobs(options?: ExecuteQueryOptions): QueryPromise<ListJobsData, undefined>;
+export function listJobs(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListJobsData, undefined>;
 
 interface CreateJobRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -317,8 +337,8 @@ interface ListApplicationsRef {
 }
 export const listApplicationsRef: ListApplicationsRef;
 
-export function listApplications(): QueryPromise<ListApplicationsData, undefined>;
-export function listApplications(dc: DataConnect): QueryPromise<ListApplicationsData, undefined>;
+export function listApplications(options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, undefined>;
+export function listApplications(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, undefined>;
 
 interface GetApplicationRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -329,8 +349,8 @@ interface GetApplicationRef {
 }
 export const getApplicationRef: GetApplicationRef;
 
-export function getApplication(vars: GetApplicationVariables): QueryPromise<GetApplicationData, GetApplicationVariables>;
-export function getApplication(dc: DataConnect, vars: GetApplicationVariables): QueryPromise<GetApplicationData, GetApplicationVariables>;
+export function getApplication(vars: GetApplicationVariables, options?: ExecuteQueryOptions): QueryPromise<GetApplicationData, GetApplicationVariables>;
+export function getApplication(dc: DataConnect, vars: GetApplicationVariables, options?: ExecuteQueryOptions): QueryPromise<GetApplicationData, GetApplicationVariables>;
 
 interface CreateApplicationRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -389,8 +409,8 @@ interface ListEmployeesRef {
 }
 export const listEmployeesRef: ListEmployeesRef;
 
-export function listEmployees(): QueryPromise<ListEmployeesData, undefined>;
-export function listEmployees(dc: DataConnect): QueryPromise<ListEmployeesData, undefined>;
+export function listEmployees(options?: ExecuteQueryOptions): QueryPromise<ListEmployeesData, undefined>;
+export function listEmployees(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListEmployeesData, undefined>;
 
 interface CreateEmployeeRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -404,6 +424,30 @@ export const createEmployeeRef: CreateEmployeeRef;
 export function createEmployee(vars: CreateEmployeeVariables): MutationPromise<CreateEmployeeData, CreateEmployeeVariables>;
 export function createEmployee(dc: DataConnect, vars: CreateEmployeeVariables): MutationPromise<CreateEmployeeData, CreateEmployeeVariables>;
 
+interface UpdateEmployeeRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateEmployeeVariables): MutationRef<UpdateEmployeeData, UpdateEmployeeVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateEmployeeVariables): MutationRef<UpdateEmployeeData, UpdateEmployeeVariables>;
+  operationName: string;
+}
+export const updateEmployeeRef: UpdateEmployeeRef;
+
+export function updateEmployee(vars: UpdateEmployeeVariables): MutationPromise<UpdateEmployeeData, UpdateEmployeeVariables>;
+export function updateEmployee(dc: DataConnect, vars: UpdateEmployeeVariables): MutationPromise<UpdateEmployeeData, UpdateEmployeeVariables>;
+
+interface DeleteEmployeeRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteEmployeeVariables): MutationRef<DeleteEmployeeData, DeleteEmployeeVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: DeleteEmployeeVariables): MutationRef<DeleteEmployeeData, DeleteEmployeeVariables>;
+  operationName: string;
+}
+export const deleteEmployeeRef: DeleteEmployeeRef;
+
+export function deleteEmployee(vars: DeleteEmployeeVariables): MutationPromise<DeleteEmployeeData, DeleteEmployeeVariables>;
+export function deleteEmployee(dc: DataConnect, vars: DeleteEmployeeVariables): MutationPromise<DeleteEmployeeData, DeleteEmployeeVariables>;
+
 interface ListInterviewsRef {
   /* Allow users to create refs without passing in DataConnect */
   (): QueryRef<ListInterviewsData, undefined>;
@@ -413,8 +457,8 @@ interface ListInterviewsRef {
 }
 export const listInterviewsRef: ListInterviewsRef;
 
-export function listInterviews(): QueryPromise<ListInterviewsData, undefined>;
-export function listInterviews(dc: DataConnect): QueryPromise<ListInterviewsData, undefined>;
+export function listInterviews(options?: ExecuteQueryOptions): QueryPromise<ListInterviewsData, undefined>;
+export function listInterviews(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListInterviewsData, undefined>;
 
 interface CreateInterviewRef {
   /* Allow users to create refs without passing in DataConnect */
