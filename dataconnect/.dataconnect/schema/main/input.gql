@@ -1,10 +1,4 @@
 """
-✨ `Applicant_KeyOutput` returns the primary key fields of table type `Applicant`.
-
-It has the same format as `Applicant_Key`, but is only used as mutation return value.
-"""
-scalar Applicant_KeyOutput
-"""
 ✨ `Application_KeyOutput` returns the primary key fields of table type `Application`.
 
 It has the same format as `Application_Key`, but is only used as mutation return value.
@@ -29,177 +23,6 @@ It has the same format as `Job_Key`, but is only used as mutation return value.
 """
 scalar Job_KeyOutput
 """
-✨ Generated data input type for table 'Applicant'. It includes all necessary fields for creating or upserting rows into table.
-"""
-input Applicant_Data {
-  """
-  ✨ Generated from Field `Applicant`.`id` of type `UUID!`
-  """
-  id: UUID
-  """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Applicant`.`id` of type `UUID!`)
-  """
-  id_expr: UUID_Expr @fdc_forbiddenInVariables
-  """
-  ✨ Generated from Field `Applicant`.`email` of type `String!`
-  """
-  email: String
-  """
-  ✨ `_expr` server value variant of `email` (✨ Generated from Field `Applicant`.`email` of type `String!`)
-  """
-  email_expr: String_Expr @fdc_forbiddenInVariables
-  """
-  ✨ Generated from Field `Applicant`.`name` of type `String!`
-  """
-  name: String
-  """
-  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Applicant`.`name` of type `String!`)
-  """
-  name_expr: String_Expr @fdc_forbiddenInVariables
-}
-"""
-✨ Generated filter input type for table 'Applicant'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
-"""
-input Applicant_Filter {
-  """
-  Apply multiple filter conditions using `AND` logic.
-  """
-  _and: [Applicant_Filter!]
-  """
-  Negate the result of the provided filter condition.
-  """
-  _not: Applicant_Filter
-  """
-  Apply multiple filter conditions using `OR` logic.
-  """
-  _or: [Applicant_Filter!]
-  """
-  ✨ Generated from Field `Applicant`.`id` of type `UUID!`
-  """
-  id: UUID_Filter
-  """
-  ✨ Generated from Field `Applicant`.`email` of type `String!`
-  """
-  email: String_Filter
-  """
-  ✨ Generated from Field `Applicant`.`name` of type `String!`
-  """
-  name: String_Filter
-  """
-  ✨ Generated from Field `Applicant`.`applications_on_applicant` of type `[Application!]!`
-  """
-  applications_on_applicant: Application_ListFilter
-}
-"""
-✨ Generated first-row input type for table 'Applicant'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
-"""
-input Applicant_FirstRow {
-  """
-  Order the result by the specified fields.
-  """
-  orderBy: [Applicant_Order!]
-  """
-  Filters rows based on the specified conditions.
-  """
-  where: Applicant_Filter
-}
-"""
-✨ Generated having input type for table 'Applicant'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
-"""
-input Applicant_Having {
-  """
-  Apply multiple Having conditions using `AND` logic.
-  """
-  _and: [Applicant_Having!]
-  """
-  Whether to apply DISTINCT to the aggregate function.
-  """
-  _distinct: Boolean
-  """
-  Negate the result of the provided Having condition.
-  """
-  _not: Applicant_Having
-  """
-  Apply multiple Having conditions using `OR` logic.
-  """
-  _or: [Applicant_Having!]
-  """
-  ✨ Generated from Field `Applicant`.`_count` of type `Int!`
-  """
-  _count: Int_Filter
-  """
-  ✨ Generated from Field `Applicant`.`email_count` of type `Int!`
-  """
-  email_count: Int_Filter
-  """
-  ✨ Generated from Field `Applicant`.`id_count` of type `Int!`
-  """
-  id_count: Int_Filter
-  """
-  ✨ Generated from Field `Applicant`.`name_count` of type `Int!`
-  """
-  name_count: Int_Filter
-}
-"""
-✨ Generated key input type for table 'Applicant'. It represents the primary key fields used to uniquely identify a row in the table.
-"""
-input Applicant_Key {
-  """
-  ✨ Generated from Field `Applicant`.`id` of type `UUID!`
-  """
-  id: UUID
-  """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Applicant`.`id` of type `UUID!`)
-  """
-  id_expr: UUID_Expr @fdc_forbiddenInVariables
-}
-"""
-✨ Generated list filter input type for table 'Applicant'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
-"""
-input Applicant_ListFilter {
-  """
-  The desired number of objects that match the condition (defaults to at least one).
-  """
-  count: Int_Filter = {gt:0}
-  """
-  Condition of the related objects to filter for.
-  """
-  exist: Applicant_Filter
-}
-"""
-✨ Generated order input type for table 'Applicant'. This input defines the sorting order of rows in query results based on one or more fields.
-"""
-input Applicant_Order {
-  """
-  ✨ Generated from Field `Applicant`.`id` of type `UUID!`
-  """
-  id: OrderDirection
-  """
-  ✨ Generated from Field `Applicant`.`email` of type `String!`
-  """
-  email: OrderDirection
-  """
-  ✨ Generated from Field `Applicant`.`name` of type `String!`
-  """
-  name: OrderDirection
-  """
-  ✨ Generated from Field `Applicant`.`_count` of type `Int!`
-  """
-  _count: OrderDirection
-  """
-  ✨ Generated from Field `Applicant`.`email_count` of type `Int!`
-  """
-  email_count: OrderDirection
-  """
-  ✨ Generated from Field `Applicant`.`id_count` of type `Int!`
-  """
-  id_count: OrderDirection
-  """
-  ✨ Generated from Field `Applicant`.`name_count` of type `Int!`
-  """
-  name_count: OrderDirection
-}
-"""
 ✨ Generated data input type for table 'Application'. It includes all necessary fields for creating or upserting rows into table.
 """
 input Application_Data {
@@ -212,14 +35,6 @@ input Application_Data {
   """
   id_expr: UUID_Expr @fdc_forbiddenInVariables
   """
-  ✨ Generated from Field `Application`.`applicantId` of type `UUID!`
-  """
-  applicantId: UUID
-  """
-  ✨ `_expr` server value variant of `applicantId` (✨ Generated from Field `Application`.`applicantId` of type `UUID!`)
-  """
-  applicantId_expr: UUID_Expr @fdc_forbiddenInVariables
-  """
   ✨ Generated from Field `Application`.`jobId` of type `UUID!`
   """
   jobId: UUID
@@ -227,10 +42,6 @@ input Application_Data {
   ✨ `_expr` server value variant of `jobId` (✨ Generated from Field `Application`.`jobId` of type `UUID!`)
   """
   jobId_expr: UUID_Expr @fdc_forbiddenInVariables
-  """
-  ✨ Generated from Field `Application`.`applicant` of type `Applicant!`
-  """
-  applicant: Applicant_Key @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `Application`.`job` of type `Job!`
   """
@@ -251,6 +62,22 @@ input Application_Data {
   ✨ `_update` server value variant of `appliedDate` (✨ Generated from Field `Application`.`appliedDate` of type `Date!`)
   """
   appliedDate_update: [Date_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Application`.`email` of type `String!`
+  """
+  email: String
+  """
+  ✨ `_expr` server value variant of `email` (✨ Generated from Field `Application`.`email` of type `String!`)
+  """
+  email_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Application`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Application`.`name` of type `String!`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `Application`.`salaryProposed` of type `Float`
   """
@@ -293,17 +120,9 @@ input Application_Filter {
   """
   id: UUID_Filter
   """
-  ✨ Generated from Field `Application`.`applicantId` of type `UUID!`
-  """
-  applicantId: UUID_Filter
-  """
   ✨ Generated from Field `Application`.`jobId` of type `UUID!`
   """
   jobId: UUID_Filter
-  """
-  ✨ Generated from Field `Application`.`applicant` of type `Applicant!`
-  """
-  applicant: Applicant_Filter
   """
   ✨ Generated from Field `Application`.`job` of type `Job!`
   """
@@ -312,6 +131,14 @@ input Application_Filter {
   ✨ Generated from Field `Application`.`appliedDate` of type `Date!`
   """
   appliedDate: Date_Filter
+  """
+  ✨ Generated from Field `Application`.`email` of type `String!`
+  """
+  email: String_Filter
+  """
+  ✨ Generated from Field `Application`.`name` of type `String!`
+  """
+  name: String_Filter
   """
   ✨ Generated from Field `Application`.`salaryProposed` of type `Float`
   """
@@ -367,13 +194,13 @@ input Application_Having {
   """
   _count: Int_Filter
   """
-  ✨ Generated from Field `Application`.`applicantId_count` of type `Int!`
-  """
-  applicantId_count: Int_Filter
-  """
   ✨ Generated from Field `Application`.`appliedDate_count` of type `Int!`
   """
   appliedDate_count: Int_Filter
+  """
+  ✨ Generated from Field `Application`.`email_count` of type `Int!`
+  """
+  email_count: Int_Filter
   """
   ✨ Generated from Field `Application`.`id_count` of type `Int!`
   """
@@ -382,6 +209,10 @@ input Application_Having {
   ✨ Generated from Field `Application`.`jobId_count` of type `Int!`
   """
   jobId_count: Int_Filter
+  """
+  ✨ Generated from Field `Application`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
   """
   ✨ Generated from Field `Application`.`salaryProposed_count` of type `Int!`
   """
@@ -450,17 +281,9 @@ input Application_Order {
   """
   id: OrderDirection
   """
-  ✨ Generated from Field `Application`.`applicantId` of type `UUID!`
-  """
-  applicantId: OrderDirection
-  """
   ✨ Generated from Field `Application`.`jobId` of type `UUID!`
   """
   jobId: OrderDirection
-  """
-  ✨ Generated from Field `Application`.`applicant` of type `Applicant!`
-  """
-  applicant: Applicant_Order
   """
   ✨ Generated from Field `Application`.`job` of type `Job!`
   """
@@ -469,6 +292,14 @@ input Application_Order {
   ✨ Generated from Field `Application`.`appliedDate` of type `Date!`
   """
   appliedDate: OrderDirection
+  """
+  ✨ Generated from Field `Application`.`email` of type `String!`
+  """
+  email: OrderDirection
+  """
+  ✨ Generated from Field `Application`.`name` of type `String!`
+  """
+  name: OrderDirection
   """
   ✨ Generated from Field `Application`.`salaryProposed` of type `Float`
   """
@@ -482,13 +313,13 @@ input Application_Order {
   """
   _count: OrderDirection
   """
-  ✨ Generated from Field `Application`.`applicantId_count` of type `Int!`
-  """
-  applicantId_count: OrderDirection
-  """
   ✨ Generated from Field `Application`.`appliedDate_count` of type `Int!`
   """
   appliedDate_count: OrderDirection
+  """
+  ✨ Generated from Field `Application`.`email_count` of type `Int!`
+  """
+  email_count: OrderDirection
   """
   ✨ Generated from Field `Application`.`id_count` of type `Int!`
   """
@@ -497,6 +328,10 @@ input Application_Order {
   ✨ Generated from Field `Application`.`jobId_count` of type `Int!`
   """
   jobId_count: OrderDirection
+  """
+  ✨ Generated from Field `Application`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
   """
   ✨ Generated from Field `Application`.`salaryProposed_count` of type `Int!`
   """
@@ -818,21 +653,21 @@ input Interview_Data {
   """
   application: Application_Key @fdc_forbiddenInVariables
   """
-  ✨ Generated from Field `Interview`.`interviewEndDate` of type `Date`
+  ✨ Generated from Field `Interview`.`interviewEndDate` of type `Timestamp`
   """
-  interviewEndDate: Date
+  interviewEndDate: Timestamp
   """
-  ✨ `_date` server value variant of `interviewEndDate` (✨ Generated from Field `Interview`.`interviewEndDate` of type `Date`)
+  ✨ `_expr` server value variant of `interviewEndDate` (✨ Generated from Field `Interview`.`interviewEndDate` of type `Timestamp`)
   """
-  interviewEndDate_date: Date_Relative @fdc_forbiddenInVariables
+  interviewEndDate_expr: Timestamp_Expr @fdc_forbiddenInVariables
   """
-  ✨ `_expr` server value variant of `interviewEndDate` (✨ Generated from Field `Interview`.`interviewEndDate` of type `Date`)
+  ✨ `_time` server value variant of `interviewEndDate` (✨ Generated from Field `Interview`.`interviewEndDate` of type `Timestamp`)
   """
-  interviewEndDate_expr: Date_Expr @fdc_forbiddenInVariables
+  interviewEndDate_time: Timestamp_Relative @fdc_forbiddenInVariables
   """
-  ✨ `_update` server value variant of `interviewEndDate` (✨ Generated from Field `Interview`.`interviewEndDate` of type `Date`)
+  ✨ `_update` server value variant of `interviewEndDate` (✨ Generated from Field `Interview`.`interviewEndDate` of type `Timestamp`)
   """
-  interviewEndDate_update: [Date_Update!] @fdc_forbiddenInVariables
+  interviewEndDate_update: [Timestamp_Update!] @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `Interview`.`interviewModality` of type `String`
   """
@@ -842,21 +677,21 @@ input Interview_Data {
   """
   interviewModality_expr: String_Expr @fdc_forbiddenInVariables
   """
-  ✨ Generated from Field `Interview`.`interviewStartDate` of type `Date`
+  ✨ Generated from Field `Interview`.`interviewStartDate` of type `Timestamp`
   """
-  interviewStartDate: Date
+  interviewStartDate: Timestamp
   """
-  ✨ `_date` server value variant of `interviewStartDate` (✨ Generated from Field `Interview`.`interviewStartDate` of type `Date`)
+  ✨ `_expr` server value variant of `interviewStartDate` (✨ Generated from Field `Interview`.`interviewStartDate` of type `Timestamp`)
   """
-  interviewStartDate_date: Date_Relative @fdc_forbiddenInVariables
+  interviewStartDate_expr: Timestamp_Expr @fdc_forbiddenInVariables
   """
-  ✨ `_expr` server value variant of `interviewStartDate` (✨ Generated from Field `Interview`.`interviewStartDate` of type `Date`)
+  ✨ `_time` server value variant of `interviewStartDate` (✨ Generated from Field `Interview`.`interviewStartDate` of type `Timestamp`)
   """
-  interviewStartDate_expr: Date_Expr @fdc_forbiddenInVariables
+  interviewStartDate_time: Timestamp_Relative @fdc_forbiddenInVariables
   """
-  ✨ `_update` server value variant of `interviewStartDate` (✨ Generated from Field `Interview`.`interviewStartDate` of type `Date`)
+  ✨ `_update` server value variant of `interviewStartDate` (✨ Generated from Field `Interview`.`interviewStartDate` of type `Timestamp`)
   """
-  interviewStartDate_update: [Date_Update!] @fdc_forbiddenInVariables
+  interviewStartDate_update: [Timestamp_Update!] @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `Interview`.`interviewerName` of type `String`
   """
@@ -895,17 +730,17 @@ input Interview_Filter {
   """
   application: Application_Filter
   """
-  ✨ Generated from Field `Interview`.`interviewEndDate` of type `Date`
+  ✨ Generated from Field `Interview`.`interviewEndDate` of type `Timestamp`
   """
-  interviewEndDate: Date_Filter
+  interviewEndDate: Timestamp_Filter
   """
   ✨ Generated from Field `Interview`.`interviewModality` of type `String`
   """
   interviewModality: String_Filter
   """
-  ✨ Generated from Field `Interview`.`interviewStartDate` of type `Date`
+  ✨ Generated from Field `Interview`.`interviewStartDate` of type `Timestamp`
   """
-  interviewStartDate: Date_Filter
+  interviewStartDate: Timestamp_Filter
   """
   ✨ Generated from Field `Interview`.`interviewerName` of type `String`
   """
@@ -973,21 +808,21 @@ input Interview_Having {
   """
   interviewerName_count: Int_Filter
   """
-  ✨ Generated from Field `Interview`.`interviewEndDate_min` of type `Date`
+  ✨ Generated from Field `Interview`.`interviewEndDate_min` of type `Timestamp`
   """
-  interviewEndDate_min: Date_Filter
+  interviewEndDate_min: Timestamp_Filter
   """
-  ✨ Generated from Field `Interview`.`interviewStartDate_min` of type `Date`
+  ✨ Generated from Field `Interview`.`interviewStartDate_min` of type `Timestamp`
   """
-  interviewStartDate_min: Date_Filter
+  interviewStartDate_min: Timestamp_Filter
   """
-  ✨ Generated from Field `Interview`.`interviewEndDate_max` of type `Date`
+  ✨ Generated from Field `Interview`.`interviewEndDate_max` of type `Timestamp`
   """
-  interviewEndDate_max: Date_Filter
+  interviewEndDate_max: Timestamp_Filter
   """
-  ✨ Generated from Field `Interview`.`interviewStartDate_max` of type `Date`
+  ✨ Generated from Field `Interview`.`interviewStartDate_max` of type `Timestamp`
   """
-  interviewStartDate_max: Date_Filter
+  interviewStartDate_max: Timestamp_Filter
 }
 """
 ✨ Generated key input type for table 'Interview'. It represents the primary key fields used to uniquely identify a row in the table.
@@ -1032,7 +867,7 @@ input Interview_Order {
   """
   application: Application_Order
   """
-  ✨ Generated from Field `Interview`.`interviewEndDate` of type `Date`
+  ✨ Generated from Field `Interview`.`interviewEndDate` of type `Timestamp`
   """
   interviewEndDate: OrderDirection
   """
@@ -1040,7 +875,7 @@ input Interview_Order {
   """
   interviewModality: OrderDirection
   """
-  ✨ Generated from Field `Interview`.`interviewStartDate` of type `Date`
+  ✨ Generated from Field `Interview`.`interviewStartDate` of type `Timestamp`
   """
   interviewStartDate: OrderDirection
   """
@@ -1076,19 +911,19 @@ input Interview_Order {
   """
   interviewerName_count: OrderDirection
   """
-  ✨ Generated from Field `Interview`.`interviewEndDate_min` of type `Date`
+  ✨ Generated from Field `Interview`.`interviewEndDate_min` of type `Timestamp`
   """
   interviewEndDate_min: OrderDirection
   """
-  ✨ Generated from Field `Interview`.`interviewStartDate_min` of type `Date`
+  ✨ Generated from Field `Interview`.`interviewStartDate_min` of type `Timestamp`
   """
   interviewStartDate_min: OrderDirection
   """
-  ✨ Generated from Field `Interview`.`interviewEndDate_max` of type `Date`
+  ✨ Generated from Field `Interview`.`interviewEndDate_max` of type `Timestamp`
   """
   interviewEndDate_max: OrderDirection
   """
-  ✨ Generated from Field `Interview`.`interviewStartDate_max` of type `Date`
+  ✨ Generated from Field `Interview`.`interviewStartDate_max` of type `Timestamp`
   """
   interviewStartDate_max: OrderDirection
 }

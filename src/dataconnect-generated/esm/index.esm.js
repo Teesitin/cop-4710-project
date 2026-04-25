@@ -194,3 +194,52 @@ export function deleteEmployee(dcOrVars, vars) {
   return executeMutation(deleteEmployeeRef(dcInstance, inputVars));
 }
 
+export const listInterviewsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListInterviews');
+}
+listInterviewsRef.operationName = 'ListInterviews';
+
+export function listInterviews(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listInterviewsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+
+export const createInterviewRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateInterview', inputVars);
+}
+createInterviewRef.operationName = 'CreateInterview';
+
+export function createInterview(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createInterviewRef(dcInstance, inputVars));
+}
+
+export const deleteInterviewRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'DeleteInterview', inputVars);
+}
+deleteInterviewRef.operationName = 'DeleteInterview';
+
+export function deleteInterview(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(deleteInterviewRef(dcInstance, inputVars));
+}
+
+export const updateInterviewRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateInterview', inputVars);
+}
+updateInterviewRef.operationName = 'UpdateInterview';
+
+export function updateInterview(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateInterviewRef(dcInstance, inputVars));
+}
+

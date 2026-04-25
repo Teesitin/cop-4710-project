@@ -529,5 +529,3 @@
         {/if}
     </div>
 </section>
-
-<Notify/>

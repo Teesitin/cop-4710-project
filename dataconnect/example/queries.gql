@@ -203,3 +203,58 @@ mutation UpdateEmployee(
 mutation DeleteEmployee($id: UUID!) @auth(level: PUBLIC, insecureReason: "Local testing only") {
   employee_delete(id: $id)
 }
+
+# =========================================================
+# Interview
+# =========================================================
+query ListInterviews @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  interviews {
+    id
+    application {
+      id
+      name
+      job {
+        title
+      }
+    }
+    interviewerName
+    interviewStartDate
+    interviewEndDate
+    interviewModality
+  }
+}
+
+mutation CreateInterview(
+  $applicationId: UUID!
+  $interviewerName: String
+  $interviewStartDate: Timestamp
+  $interviewEndDate: Timestamp
+  $interviewModality: String
+) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  interview_insert(data: {
+    applicationId: $applicationId
+    interviewerName: $interviewerName
+    interviewStartDate: $interviewStartDate
+    interviewEndDate: $interviewEndDate
+    interviewModality: $interviewModality
+  })
+}
+
+mutation DeleteInterview($id: UUID!) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  interview_delete(id: $id)
+}
+
+mutation UpdateInterview(
+  $id: UUID!
+  $interviewerName: String
+  $interviewStartDate: Timestamp
+  $interviewEndDate: Timestamp
+  $interviewModality: String
+) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  interview_update(id: $id, data: {
+    interviewerName: $interviewerName
+    interviewStartDate: $interviewStartDate
+    interviewEndDate: $interviewEndDate
+    interviewModality: $interviewModality
+  })
+}

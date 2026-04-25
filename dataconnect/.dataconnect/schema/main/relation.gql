@@ -1,78 +1,3 @@
-extend type Applicant {
-  """
-  ✨ List `Application` objects in a one-to-many relationship (where `Application`.`applicant` is this object).
-  """
-  applications_on_applicant(
-    """
-    Filter condition to narrow down the query results.
-    """
-    where: Application_Filter
-
-    """
-    Order the query results by specific fields.
-    """
-    orderBy: [Application_Order!]
-
-    """
-    Number of rows to skip before starting to return the results.
-    """
-    offset: Int
-
-    """
-    Maximum number of rows to return (defaults to 100 rows).
-    """
-    limit: Int = 100
-
-    """
-    Set to true to return distinct results.
-    """
-    distinct: Boolean = false
-
-    """
-    Filter condition to apply to the groups of aggregate queries.
-    """
-    having: Application_Having
-  ): [Application!]! @fdc_generated(from: "Application.applicant", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
-  """
-  Implicit metadata field that cannot be written. It provides extra information about query results.
-  """
-  _metadata: _Metadata @fdc_generated(from: "Applicant", purpose: METADATA_FIELD)
-  """
-  ✨ Count the number of rows in the `Applicant` table.
-  """
-  _count: Int! @fdc_generated(from: "Applicant.", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `Applicant` table where the `email` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  email_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Applicant.email", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `Applicant` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  id_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Applicant.id", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `Applicant` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  name_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Applicant.name", purpose: QUERY_COUNT)
-  """
-  A generated field that is used for caching results in SDKs.
-  """
-  _id: ID! @fdc_generated(from: "Applicant.id", purpose: ENTITY_ID)
-}
 extend type Application {
   """
   ✨ List `Employee` objects in a one-to-many relationship (where `Employee`.`originalApplication` is this object).
@@ -151,15 +76,6 @@ extend type Application {
   """
   _count: Int! @fdc_generated(from: "Application.", purpose: QUERY_COUNT)
   """
-  ✨ Count the number of rows in the `Application` table where the `applicantId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  applicantId_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Application.applicantId", purpose: QUERY_COUNT)
-  """
   ✨ Count the number of rows in the `Application` table where the `appliedDate` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   appliedDate_count(
@@ -168,6 +84,15 @@ extend type Application {
     """
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "Application.appliedDate", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Application` table where the `email` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  email_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Application.email", purpose: QUERY_COUNT)
   """
   ✨ Count the number of rows in the `Application` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
@@ -186,6 +111,15 @@ extend type Application {
     """
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "Application.jobId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Application` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Application.name", purpose: QUERY_COUNT)
   """
   ✨ Count the number of rows in the `Application` table where the `salaryProposed` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
@@ -377,19 +311,19 @@ extend type Interview {
   """
   ✨ Minimum of the `interviewEndDate` field in the `Interview` table.
   """
-  interviewEndDate_min: Date @fdc_generated(from: "Interview.interviewEndDate", purpose: QUERY_MIN)
+  interviewEndDate_min: Timestamp @fdc_generated(from: "Interview.interviewEndDate", purpose: QUERY_MIN)
   """
   ✨ Minimum of the `interviewStartDate` field in the `Interview` table.
   """
-  interviewStartDate_min: Date @fdc_generated(from: "Interview.interviewStartDate", purpose: QUERY_MIN)
+  interviewStartDate_min: Timestamp @fdc_generated(from: "Interview.interviewStartDate", purpose: QUERY_MIN)
   """
   ✨ Maximum of the `interviewEndDate` field in the `Interview` table.
   """
-  interviewEndDate_max: Date @fdc_generated(from: "Interview.interviewEndDate", purpose: QUERY_MAX)
+  interviewEndDate_max: Timestamp @fdc_generated(from: "Interview.interviewEndDate", purpose: QUERY_MAX)
   """
   ✨ Maximum of the `interviewStartDate` field in the `Interview` table.
   """
-  interviewStartDate_max: Date @fdc_generated(from: "Interview.interviewStartDate", purpose: QUERY_MAX)
+  interviewStartDate_max: Timestamp @fdc_generated(from: "Interview.interviewStartDate", purpose: QUERY_MAX)
   """
   A generated field that is used for caching results in SDKs.
   """

@@ -12,6 +12,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*ListApplications*](#listapplications)
   - [*GetApplication*](#getapplication)
   - [*ListEmployees*](#listemployees)
+  - [*ListInterviews*](#listinterviews)
 - [**Mutations**](#mutations)
   - [*CreateJob*](#createjob)
   - [*UpdateJob*](#updatejob)
@@ -24,6 +25,9 @@ This README will guide you through the process of using the generated JavaScript
   - [*CreateEmployee*](#createemployee)
   - [*UpdateEmployee*](#updateemployee)
   - [*DeleteEmployee*](#deleteemployee)
+  - [*CreateInterview*](#createinterview)
+  - [*DeleteInterview*](#deleteinterview)
+  - [*UpdateInterview*](#updateinterview)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `example`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -504,6 +508,110 @@ console.log(data.employees);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.employees);
+});
+```
+
+## ListInterviews
+You can execute the `ListInterviews` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listInterviews(options?: ExecuteQueryOptions): QueryPromise<ListInterviewsData, undefined>;
+
+interface ListInterviewsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListInterviewsData, undefined>;
+}
+export const listInterviewsRef: ListInterviewsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listInterviews(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListInterviewsData, undefined>;
+
+interface ListInterviewsRef {
+  ...
+  (dc: DataConnect): QueryRef<ListInterviewsData, undefined>;
+}
+export const listInterviewsRef: ListInterviewsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listInterviewsRef:
+```typescript
+const name = listInterviewsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListInterviews` query has no variables.
+### Return Type
+Recall that executing the `ListInterviews` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListInterviewsData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListInterviewsData {
+  interviews: ({
+    id: UUIDString;
+    application: {
+      id: UUIDString;
+      name: string;
+      job: {
+        title: string;
+      };
+    } & Application_Key;
+      interviewerName?: string | null;
+      interviewStartDate?: TimestampString | null;
+      interviewEndDate?: TimestampString | null;
+      interviewModality?: string | null;
+  } & Interview_Key)[];
+}
+```
+### Using `ListInterviews`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listInterviews } from '@dataconnect/generated';
+
+
+// Call the `listInterviews()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listInterviews();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listInterviews(dataConnect);
+
+console.log(data.interviews);
+
+// Or, you can use the `Promise` API.
+listInterviews().then((response) => {
+  const data = response.data;
+  console.log(data.interviews);
+});
+```
+
+### Using `ListInterviews`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listInterviewsRef } from '@dataconnect/generated';
+
+
+// Call the `listInterviewsRef()` function to get a reference to the query.
+const ref = listInterviewsRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listInterviewsRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.interviews);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.interviews);
 });
 ```
 
@@ -1793,6 +1901,357 @@ console.log(data.employee_delete);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.employee_delete);
+});
+```
+
+## CreateInterview
+You can execute the `CreateInterview` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+createInterview(vars: CreateInterviewVariables): MutationPromise<CreateInterviewData, CreateInterviewVariables>;
+
+interface CreateInterviewRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateInterviewVariables): MutationRef<CreateInterviewData, CreateInterviewVariables>;
+}
+export const createInterviewRef: CreateInterviewRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+createInterview(dc: DataConnect, vars: CreateInterviewVariables): MutationPromise<CreateInterviewData, CreateInterviewVariables>;
+
+interface CreateInterviewRef {
+  ...
+  (dc: DataConnect, vars: CreateInterviewVariables): MutationRef<CreateInterviewData, CreateInterviewVariables>;
+}
+export const createInterviewRef: CreateInterviewRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the createInterviewRef:
+```typescript
+const name = createInterviewRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `CreateInterview` mutation requires an argument of type `CreateInterviewVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface CreateInterviewVariables {
+  applicationId: UUIDString;
+  interviewerName?: string | null;
+  interviewStartDate?: TimestampString | null;
+  interviewEndDate?: TimestampString | null;
+  interviewModality?: string | null;
+}
+```
+### Return Type
+Recall that executing the `CreateInterview` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `CreateInterviewData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface CreateInterviewData {
+  interview_insert: Interview_Key;
+}
+```
+### Using `CreateInterview`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, createInterview, CreateInterviewVariables } from '@dataconnect/generated';
+
+// The `CreateInterview` mutation requires an argument of type `CreateInterviewVariables`:
+const createInterviewVars: CreateInterviewVariables = {
+  applicationId: ..., 
+  interviewerName: ..., // optional
+  interviewStartDate: ..., // optional
+  interviewEndDate: ..., // optional
+  interviewModality: ..., // optional
+};
+
+// Call the `createInterview()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await createInterview(createInterviewVars);
+// Variables can be defined inline as well.
+const { data } = await createInterview({ applicationId: ..., interviewerName: ..., interviewStartDate: ..., interviewEndDate: ..., interviewModality: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await createInterview(dataConnect, createInterviewVars);
+
+console.log(data.interview_insert);
+
+// Or, you can use the `Promise` API.
+createInterview(createInterviewVars).then((response) => {
+  const data = response.data;
+  console.log(data.interview_insert);
+});
+```
+
+### Using `CreateInterview`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, createInterviewRef, CreateInterviewVariables } from '@dataconnect/generated';
+
+// The `CreateInterview` mutation requires an argument of type `CreateInterviewVariables`:
+const createInterviewVars: CreateInterviewVariables = {
+  applicationId: ..., 
+  interviewerName: ..., // optional
+  interviewStartDate: ..., // optional
+  interviewEndDate: ..., // optional
+  interviewModality: ..., // optional
+};
+
+// Call the `createInterviewRef()` function to get a reference to the mutation.
+const ref = createInterviewRef(createInterviewVars);
+// Variables can be defined inline as well.
+const ref = createInterviewRef({ applicationId: ..., interviewerName: ..., interviewStartDate: ..., interviewEndDate: ..., interviewModality: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = createInterviewRef(dataConnect, createInterviewVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.interview_insert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.interview_insert);
+});
+```
+
+## DeleteInterview
+You can execute the `DeleteInterview` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+deleteInterview(vars: DeleteInterviewVariables): MutationPromise<DeleteInterviewData, DeleteInterviewVariables>;
+
+interface DeleteInterviewRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteInterviewVariables): MutationRef<DeleteInterviewData, DeleteInterviewVariables>;
+}
+export const deleteInterviewRef: DeleteInterviewRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+deleteInterview(dc: DataConnect, vars: DeleteInterviewVariables): MutationPromise<DeleteInterviewData, DeleteInterviewVariables>;
+
+interface DeleteInterviewRef {
+  ...
+  (dc: DataConnect, vars: DeleteInterviewVariables): MutationRef<DeleteInterviewData, DeleteInterviewVariables>;
+}
+export const deleteInterviewRef: DeleteInterviewRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the deleteInterviewRef:
+```typescript
+const name = deleteInterviewRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `DeleteInterview` mutation requires an argument of type `DeleteInterviewVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface DeleteInterviewVariables {
+  id: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `DeleteInterview` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `DeleteInterviewData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface DeleteInterviewData {
+  interview_delete?: Interview_Key | null;
+}
+```
+### Using `DeleteInterview`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, deleteInterview, DeleteInterviewVariables } from '@dataconnect/generated';
+
+// The `DeleteInterview` mutation requires an argument of type `DeleteInterviewVariables`:
+const deleteInterviewVars: DeleteInterviewVariables = {
+  id: ..., 
+};
+
+// Call the `deleteInterview()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await deleteInterview(deleteInterviewVars);
+// Variables can be defined inline as well.
+const { data } = await deleteInterview({ id: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await deleteInterview(dataConnect, deleteInterviewVars);
+
+console.log(data.interview_delete);
+
+// Or, you can use the `Promise` API.
+deleteInterview(deleteInterviewVars).then((response) => {
+  const data = response.data;
+  console.log(data.interview_delete);
+});
+```
+
+### Using `DeleteInterview`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, deleteInterviewRef, DeleteInterviewVariables } from '@dataconnect/generated';
+
+// The `DeleteInterview` mutation requires an argument of type `DeleteInterviewVariables`:
+const deleteInterviewVars: DeleteInterviewVariables = {
+  id: ..., 
+};
+
+// Call the `deleteInterviewRef()` function to get a reference to the mutation.
+const ref = deleteInterviewRef(deleteInterviewVars);
+// Variables can be defined inline as well.
+const ref = deleteInterviewRef({ id: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = deleteInterviewRef(dataConnect, deleteInterviewVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.interview_delete);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.interview_delete);
+});
+```
+
+## UpdateInterview
+You can execute the `UpdateInterview` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+updateInterview(vars: UpdateInterviewVariables): MutationPromise<UpdateInterviewData, UpdateInterviewVariables>;
+
+interface UpdateInterviewRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateInterviewVariables): MutationRef<UpdateInterviewData, UpdateInterviewVariables>;
+}
+export const updateInterviewRef: UpdateInterviewRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+updateInterview(dc: DataConnect, vars: UpdateInterviewVariables): MutationPromise<UpdateInterviewData, UpdateInterviewVariables>;
+
+interface UpdateInterviewRef {
+  ...
+  (dc: DataConnect, vars: UpdateInterviewVariables): MutationRef<UpdateInterviewData, UpdateInterviewVariables>;
+}
+export const updateInterviewRef: UpdateInterviewRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the updateInterviewRef:
+```typescript
+const name = updateInterviewRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `UpdateInterview` mutation requires an argument of type `UpdateInterviewVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface UpdateInterviewVariables {
+  id: UUIDString;
+  interviewerName?: string | null;
+  interviewStartDate?: TimestampString | null;
+  interviewEndDate?: TimestampString | null;
+  interviewModality?: string | null;
+}
+```
+### Return Type
+Recall that executing the `UpdateInterview` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `UpdateInterviewData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface UpdateInterviewData {
+  interview_update?: Interview_Key | null;
+}
+```
+### Using `UpdateInterview`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, updateInterview, UpdateInterviewVariables } from '@dataconnect/generated';
+
+// The `UpdateInterview` mutation requires an argument of type `UpdateInterviewVariables`:
+const updateInterviewVars: UpdateInterviewVariables = {
+  id: ..., 
+  interviewerName: ..., // optional
+  interviewStartDate: ..., // optional
+  interviewEndDate: ..., // optional
+  interviewModality: ..., // optional
+};
+
+// Call the `updateInterview()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await updateInterview(updateInterviewVars);
+// Variables can be defined inline as well.
+const { data } = await updateInterview({ id: ..., interviewerName: ..., interviewStartDate: ..., interviewEndDate: ..., interviewModality: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await updateInterview(dataConnect, updateInterviewVars);
+
+console.log(data.interview_update);
+
+// Or, you can use the `Promise` API.
+updateInterview(updateInterviewVars).then((response) => {
+  const data = response.data;
+  console.log(data.interview_update);
+});
+```
+
+### Using `UpdateInterview`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, updateInterviewRef, UpdateInterviewVariables } from '@dataconnect/generated';
+
+// The `UpdateInterview` mutation requires an argument of type `UpdateInterviewVariables`:
+const updateInterviewVars: UpdateInterviewVariables = {
+  id: ..., 
+  interviewerName: ..., // optional
+  interviewStartDate: ..., // optional
+  interviewEndDate: ..., // optional
+  interviewModality: ..., // optional
+};
+
+// Call the `updateInterviewRef()` function to get a reference to the mutation.
+const ref = updateInterviewRef(updateInterviewVars);
+// Variables can be defined inline as well.
+const ref = updateInterviewRef({ id: ..., interviewerName: ..., interviewStartDate: ..., interviewEndDate: ..., interviewModality: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = updateInterviewRef(dataConnect, updateInterviewVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.interview_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.interview_update);
 });
 ```
 

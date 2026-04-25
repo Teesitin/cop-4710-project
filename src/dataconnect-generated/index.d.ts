@@ -41,6 +41,18 @@ export interface CreateEmployeeVariables {
   originalApplicationId: UUIDString;
 }
 
+export interface CreateInterviewData {
+  interview_insert: Interview_Key;
+}
+
+export interface CreateInterviewVariables {
+  applicationId: UUIDString;
+  interviewerName?: string | null;
+  interviewStartDate?: TimestampString | null;
+  interviewEndDate?: TimestampString | null;
+  interviewModality?: string | null;
+}
+
 export interface CreateJobData {
   job_insert: Job_Key;
 }
@@ -64,6 +76,14 @@ export interface DeleteEmployeeData {
 }
 
 export interface DeleteEmployeeVariables {
+  id: UUIDString;
+}
+
+export interface DeleteInterviewData {
+  interview_delete?: Interview_Key | null;
+}
+
+export interface DeleteInterviewVariables {
   id: UUIDString;
 }
 
@@ -156,6 +176,23 @@ export interface ListEmployeesData {
   } & Employee_Key)[];
 }
 
+export interface ListInterviewsData {
+  interviews: ({
+    id: UUIDString;
+    application: {
+      id: UUIDString;
+      name: string;
+      job: {
+        title: string;
+      };
+    } & Application_Key;
+      interviewerName?: string | null;
+      interviewStartDate?: TimestampString | null;
+      interviewEndDate?: TimestampString | null;
+      interviewModality?: string | null;
+  } & Interview_Key)[];
+}
+
 export interface ListJobsData {
   jobs: ({
     id: UUIDString;
@@ -197,6 +234,18 @@ export interface UpdateEmployeeVariables {
   name: string;
   email: string;
   role: string;
+}
+
+export interface UpdateInterviewData {
+  interview_update?: Interview_Key | null;
+}
+
+export interface UpdateInterviewVariables {
+  id: UUIDString;
+  interviewerName?: string | null;
+  interviewStartDate?: TimestampString | null;
+  interviewEndDate?: TimestampString | null;
+  interviewModality?: string | null;
 }
 
 export interface UpdateJobData {
@@ -398,4 +447,52 @@ export const deleteEmployeeRef: DeleteEmployeeRef;
 
 export function deleteEmployee(vars: DeleteEmployeeVariables): MutationPromise<DeleteEmployeeData, DeleteEmployeeVariables>;
 export function deleteEmployee(dc: DataConnect, vars: DeleteEmployeeVariables): MutationPromise<DeleteEmployeeData, DeleteEmployeeVariables>;
+
+interface ListInterviewsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListInterviewsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListInterviewsData, undefined>;
+  operationName: string;
+}
+export const listInterviewsRef: ListInterviewsRef;
+
+export function listInterviews(options?: ExecuteQueryOptions): QueryPromise<ListInterviewsData, undefined>;
+export function listInterviews(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListInterviewsData, undefined>;
+
+interface CreateInterviewRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateInterviewVariables): MutationRef<CreateInterviewData, CreateInterviewVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateInterviewVariables): MutationRef<CreateInterviewData, CreateInterviewVariables>;
+  operationName: string;
+}
+export const createInterviewRef: CreateInterviewRef;
+
+export function createInterview(vars: CreateInterviewVariables): MutationPromise<CreateInterviewData, CreateInterviewVariables>;
+export function createInterview(dc: DataConnect, vars: CreateInterviewVariables): MutationPromise<CreateInterviewData, CreateInterviewVariables>;
+
+interface DeleteInterviewRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteInterviewVariables): MutationRef<DeleteInterviewData, DeleteInterviewVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: DeleteInterviewVariables): MutationRef<DeleteInterviewData, DeleteInterviewVariables>;
+  operationName: string;
+}
+export const deleteInterviewRef: DeleteInterviewRef;
+
+export function deleteInterview(vars: DeleteInterviewVariables): MutationPromise<DeleteInterviewData, DeleteInterviewVariables>;
+export function deleteInterview(dc: DataConnect, vars: DeleteInterviewVariables): MutationPromise<DeleteInterviewData, DeleteInterviewVariables>;
+
+interface UpdateInterviewRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateInterviewVariables): MutationRef<UpdateInterviewData, UpdateInterviewVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateInterviewVariables): MutationRef<UpdateInterviewData, UpdateInterviewVariables>;
+  operationName: string;
+}
+export const updateInterviewRef: UpdateInterviewRef;
+
+export function updateInterview(vars: UpdateInterviewVariables): MutationPromise<UpdateInterviewData, UpdateInterviewVariables>;
+export function updateInterview(dc: DataConnect, vars: UpdateInterviewVariables): MutationPromise<UpdateInterviewData, UpdateInterviewVariables>;
 
