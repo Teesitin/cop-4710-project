@@ -2,43 +2,52 @@
     import { onMount } from 'svelte';
 
     import {
-        listEmployees,
-        connectorConfig
+        listApplications
     } from '../../dataconnect-generated';
-    import AddEmployee from '$lib/assets/forms/AddEmployee.svelte';
 
-    type EmployeeRow = {
+    import AddApplication from '$lib/assets/forms/AddApplication.svelte';
+
+    type ApplicationRow = {
         id: string;
         name: string;
         email: string;
-        role: string;
+        jobId?: string;
+        job: {
+            id: string;
+            title: string;
+            status: string;
+            salary?: string | null;
+        };
+        salaryProposed?: number | null;
+        status: string;
+        appliedDate: string;
     };
 
     let loading = $state(true);
     let error = $state('');
-    let employees = $state<EmployeeRow[]>([]);
+    let applications = $state<ApplicationRow[]>([]);
     let showAddModal = $state(false);
 
     onMount(() => {
-        loadEmployees();
+        loadApplications();
     });
 
-    function handleEmployeeAdded(newEmployee: EmployeeRow) {
-        employees = [newEmployee, ...employees];
+    function handleApplicationAdded(newApplication: ApplicationRow) {
+        applications = [newApplication, ...applications];
         showAddModal = false;
     }
 
-    async function loadEmployees() {
+    async function loadApplications() {
         try {
             loading = true;
             error = '';
 
-            const result = await listEmployees();
-            employees = result.data.employees ?? [];
+            const result = await listApplications();
+            applications = result.data.applications ?? [];
 
         } catch (err) {
-            console.error('loadEmployees error:', err);
-            error = 'Failed to load employees.';
+            console.error('loadApplications error:', err);
+            error = 'Failed to load applications.';
         } finally {
             loading = false;
         }
@@ -46,32 +55,33 @@
 </script>
 
 <svelte:head>
-    <title>Employees</title>
+    <title>Applications</title>
 </svelte:head>
 
 <section class="mx-auto max-w-5xl p-10 space-y-10">
     <div class="mb-8">
-        <h1 class="text-3xl font-bold tracking-tight">Employees</h1>
-        <p class="mt-1 text-sm">View all employees</p>
+        <h1 class="text-3xl font-bold tracking-tight">Applications</h1>
+        <p class="mt-1 text-sm">View all applications</p>
     </div>
-
 
     <div class="flex items-center justify-between">
         <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
-            Employees Database
+            Applications Database
         </h2>
 
         <button
             onclick={() => showAddModal = true}
             class="rounded-xl bg-blue-600 px-5 py-2 text-sm font-bold text-white transition hover:bg-blue-700 shadow-sm"
         >
-            + Add Employee
+            + Add Application
         </button>
     </div>
 
     {#if loading}
         <div class="rounded-2xl border border-gray-200 bg-white dark:bg-gray-700 p-6 shadow-sm">
-            <p class="text-sm text-gray-600 dark:text-gray-300">Loading employees...</p>
+            <p class="text-sm text-gray-600 dark:text-gray-300">
+                Loading applications...
+            </p>
         </div>
 
     {:else if error}
@@ -79,9 +89,11 @@
             <p class="text-sm font-medium text-red-700">{error}</p>
         </div>
 
-    {:else if employees.length === 0}
+    {:else if applications.length === 0}
         <div class="rounded-2xl border border-gray-200 bg-white dark:bg-gray-700 p-6 shadow-sm">
-            <p class="text-sm text-gray-600 dark:text-gray-300">No employees found.</p>
+            <p class="text-sm text-gray-600 dark:text-gray-300">
+                No applications found.
+            </p>
         </div>
 
     {:else}
@@ -96,24 +108,38 @@
                             Email
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-300">
-                            Role
+                            Job
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-300">
+                            Salary Proposed
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-300">
+                            Status
                         </th>
                     </tr>
                 </thead>
 
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-600 bg-white dark:bg-gray-700">
-                    {#each employees as emp (emp.id)}
+                    {#each applications as app (app.id)}
                         <tr class="transition hover:bg-gray-50 dark:hover:bg-gray-600">
                             <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
-                                {emp.name}
+                                {app.name}
                             </td>
 
                             <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                                {emp.email}
+                                {app.email}
                             </td>
 
                             <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                                {emp.role}
+                                {app.job?.title || '-'}
+                            </td>
+
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                {app.salaryProposed ?? '-'}
+                            </td>
+
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                {app.status}
                             </td>
                         </tr>
                     {/each}
@@ -126,18 +152,18 @@
 {#if showAddModal}
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div 
+    <div
         class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 p-4 backdrop-blur-sm"
-        onclick={(e) => { 
-            if (e.target === e.currentTarget) showAddModal = false; 
+        onclick={(e) => {
+            if (e.target === e.currentTarget) showAddModal = false;
         }}
     >
         <div class="w-full max-w-lg rounded-2xl bg-white p-8 shadow-2xl dark:bg-gray-800 dark:border dark:border-gray-700">
-            <AddEmployee
+            <AddApplication
                 close={() => {
                     showAddModal = false;
                 }}
-                success={handleEmployeeAdded}
+                success={handleApplicationAdded}
             />
         </div>
     </div>

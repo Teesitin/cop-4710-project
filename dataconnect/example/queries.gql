@@ -1,3 +1,7 @@
+# =========================================================
+# Jobs
+# =========================================================
+
 query ListJobs @auth(level: PUBLIC, insecureReason: "Local testing only") {
   jobs {
     id
@@ -19,37 +23,43 @@ mutation CreateJob(
   })
 }
 
-mutation UpdateJobStatus($id: UUID!, $status: String!) @auth(level: PUBLIC, insecureReason: "Local testing only") {
-  job_update(id: $id, data: { status: $status })
+mutation UpdateJob(
+  $id: UUID!
+  $title: String!
+  $status: String!
+  $salary: String
+) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  job_update(id: $id, data: {
+    title: $title
+    status: $status
+    salary: $salary
+  })
+}
+
+mutation UpdateJobStatus(
+  $id: UUID!
+  $status: String!
+) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  job_update(id: $id, data: {
+    status: $status
+  })
 }
 
 mutation DeleteJob($id: UUID!) @auth(level: PUBLIC, insecureReason: "Local testing only") {
   job_delete(id: $id)
 }
 
-mutation UpdateJob($id: UUID!, $title: String!, $status: String!, $salary: String) @auth(level: PUBLIC, insecureReason: "Local testing only") {
-  job_update(id: $id, data: { title: $title, status: $status, salary: $salary })
-}
 
-query ListEmployees @auth(level: PUBLIC, insecureReason: "Local testing only") {
-  employees {
-    id
-    name
-    email
-    role
-  }
-}
+# =========================================================
+# Applications
+# =========================================================
 
 query ListApplications @auth(level: PUBLIC, insecureReason: "Local testing only") {
   applications {
     id
-    applicantId
+    name
+    email
     jobId
-    applicant {
-      id
-      name
-      email
-    }
     job {
       id
       title
@@ -62,60 +72,117 @@ query ListApplications @auth(level: PUBLIC, insecureReason: "Local testing only"
   }
 }
 
-mutation UpdateApplicationStatus($id: UUID!, $status: String!) @auth(level: PUBLIC, insecureReason: "Local testing only") {
-  application_update(id: $id, data: {status: $status})
-}
-
-query ListInterviews @auth(level: PUBLIC, insecureReason: "Local testing only") {
-  interviews {
+query GetApplication($id: UUID!) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  application(id: $id) {
     id
-    application {
+    name
+    email
+    jobId
+    job {
       id
-      applicant {
-        name
-      }
-      job {
-        title
-      }
+      title
+      status
+      salary
     }
-    interviewerName
-    interviewStartDate
-    interviewEndDate
-    interviewModality
+    salaryProposed
+    status
+    appliedDate
   }
 }
 
-mutation CreateInterview(
-  $applicationId: UUID!
-  $interviewerName: String
-  $interviewStartDate: Date
-  $interviewEndDate: Date
-  $interviewModality: String
+mutation CreateApplication(
+  $name: String!
+  $email: String!
+  $jobId: UUID!
+  $salaryProposed: Float
+  $status: String!
+  $appliedDate: Date!
 ) @auth(level: PUBLIC, insecureReason: "Local testing only") {
-  interview_insert(data: {
-    applicationId: $applicationId
-    interviewerName: $interviewerName
-    interviewStartDate: $interviewStartDate
-    interviewEndDate: $interviewEndDate
-    interviewModality: $interviewModality
+  application_insert(data: {
+    name: $name
+    email: $email
+    jobId: $jobId
+    salaryProposed: $salaryProposed
+    status: $status
+    appliedDate: $appliedDate
   })
 }
 
-mutation DeleteInterview($id: UUID!) @auth(level: PUBLIC, insecureReason: "Local testing only") {
-  interview_delete(id: $id)
+mutation UpdateApplication(
+  $id: UUID!
+  $name: String!
+  $email: String!
+  $jobId: UUID!
+  $salaryProposed: Float
+  $status: String!
+  $appliedDate: Date!
+) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  application_update(id: $id, data: {
+    name: $name
+    email: $email
+    jobId: $jobId
+    salaryProposed: $salaryProposed
+    status: $status
+    appliedDate: $appliedDate
+  })
 }
 
-mutation UpdateInterview(
+mutation UpdateApplicationStatus(
   $id: UUID!
-  $interviewerName: String
-  $interviewStartDate: Date
-  $interviewEndDate: Date
-  $interviewModality: String
+  $status: String!
 ) @auth(level: PUBLIC, insecureReason: "Local testing only") {
-  interview_update(id: $id, data: {
-    interviewerName: $interviewerName
-    interviewStartDate: $interviewStartDate
-    interviewEndDate: $interviewEndDate
-    interviewModality: $interviewModality
+  application_update(id: $id, data: {
+    status: $status
+  })
+}
+
+mutation DeleteApplication($id: UUID!) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  application_delete(id: $id)
+}
+
+
+# =========================================================
+# Employees
+# =========================================================
+
+query ListEmployees @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  employees {
+    id
+    name
+    email
+    role
+    jobId
+    originalApplicationId
+    job {
+      id
+      title
+      status
+      salary
+    }
+    originalApplication {
+      id
+      name
+      email
+      status
+      salaryProposed
+      appliedDate
+      jobId
+    }
+  }
+}
+
+mutation CreateEmployee(
+  $name: String!
+  $email: String!
+  $role: String!
+  $jobId: UUID!
+  $originalApplicationId: UUID!
+) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  employee_insert(data: {
+    name: $name
+    email: $email
+    role: $role
+    jobId: $jobId
+    originalApplicationId: $originalApplicationId
   })
 }
