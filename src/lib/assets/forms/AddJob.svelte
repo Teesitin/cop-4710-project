@@ -1,52 +1,62 @@
 <script lang="ts">
-    import { executeMutation } from 'firebase/data-connect';
-    import { createJobRef } from '../../../dataconnect-generated';
+    import '$lib/firebase';
+
+    import { createJob } from '../../../dataconnect-generated';
+    import { notify } from '$lib/assets/components/notificationState.svelte';
 
     let { onClose, onSuccess } = $props<{
         onClose: () => void;
-        onSuccess: (job: any) => void;
+        onSuccess: () => void;
     }>();
 
     let jobTitle = $state('');
-    let jobSalary = $state('');
+    let jobSalary = $state<string | number>('');
     let jobStatus = $state('Open');
     let saving = $state(false);
     let formError = $state('');
 
     const statuses = ['Open', 'Interviewing', 'Filled', 'Closed'];
 
+    function closeForm() {
+        onClose();
+        notify.info('Add job cancelled.');
+    }
+
     async function handleSubmit() {
         formError = '';
 
-        if (!jobTitle.trim()) {
+        const jobTitleValue = String(jobTitle ?? '').trim();
+        const salaryText = String(jobSalary ?? '').trim();
+        const salaryValue = salaryText ? Number(salaryText) : null;
+
+        if (!jobTitleValue) {
             formError = 'Job title is required.';
+            notify.warning('Job title is required.');
+            return;
+        }
+
+        if (salaryText && Number.isNaN(salaryValue)) {
+            formError = 'Salary must be a valid number.';
+            notify.warning('Salary must be a valid number.');
             return;
         }
 
         try {
             saving = true;
 
-            const jobTitleValue = jobTitle.trim();
-            const jobSalaryValue = jobSalary.trim();
-
-            const createJobResult = await executeMutation(
-                createJobRef({
-                    title: jobTitleValue,
-                    status: jobStatus,
-                    salary: jobSalaryValue || null
-                })
-            );
-
-            onSuccess({
-                id: createJobResult.data.job_insert.id,
+            await createJob({
                 title: jobTitleValue,
                 status: jobStatus,
-                salary: jobSalaryValue || null
+                salary: salaryValue
             });
 
+            onSuccess();
+
+            notify.success('Job created.');
         } catch (err) {
             console.error('handleSubmit error:', err);
             formError = 'Failed to create job.';
+            notify.error('Failed to create job.');
         } finally {
             saving = false;
         }
@@ -63,7 +73,7 @@
 
     <div>
         <label for="jobSalary" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Salary</label>
-        <input id="jobSalary" bind:value={jobSalary} class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2.5 text-sm text-gray-900 dark:text-white outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="e.g. $90k - $110k" />
+        <input id="jobSalary" type="number" bind:value={jobSalary} class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2.5 text-sm text-gray-900 dark:text-white outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="e.g. 90000" />
     </div>
 
     <div>
@@ -83,7 +93,7 @@
 {/if}
 
 <div class="mt-8 flex justify-end space-x-3">
-    <button type="button" onclick={onClose} class="rounded-xl px-5 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition">
+    <button type="button" onclick={closeForm} class="rounded-xl px-5 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition">
         Cancel
     </button>
     <button type="button" onclick={handleSubmit} disabled={saving} class="rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 shadow-sm">

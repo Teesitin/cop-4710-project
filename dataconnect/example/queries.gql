@@ -14,7 +14,7 @@ query ListJobs @auth(level: PUBLIC, insecureReason: "Local testing only") {
 mutation CreateJob(
   $title: String!
   $status: String!
-  $salary: String
+  $salary: Float
 ) @auth(level: PUBLIC, insecureReason: "Local testing only") {
   job_insert(data: {
     title: $title
@@ -27,7 +27,7 @@ mutation UpdateJob(
   $id: UUID!
   $title: String!
   $status: String!
-  $salary: String
+  $salary: Float
 ) @auth(level: PUBLIC, insecureReason: "Local testing only") {
   job_update(id: $id, data: {
     title: $title

@@ -6,40 +6,16 @@
         createEmployee,
         listApplications,
         listEmployees,
-        listJobs
+        listJobs,
+        updateJobStatus
     } from '../../../dataconnect-generated';
+
+    import { notify } from '$lib/assets/components/notificationState.svelte';
 
     let { close, success } = $props<{
         close: () => void;
-        success: (employee: any) => void;
+        success: (employee: EmployeeRow) => void;
     }>();
-
-    type JobRow = {
-        id: string;
-        title: string;
-        status: string;
-        salary?: string | null;
-    };
-
-    type ApplicationRow = {
-        id: string;
-        name: string;
-        email: string;
-        jobId: string;
-        job: JobRow;
-        salaryProposed?: number | null;
-        status: string;
-        appliedDate: string;
-    };
-
-    type EmployeeRow = {
-        id: string;
-        name: string;
-        email: string;
-        role: string;
-        jobId?: string;
-        originalApplicationId?: string;
-    };
 
     let jobs = $state<JobRow[]>([]);
     let applications = $state<ApplicationRow[]>([]);
@@ -52,54 +28,64 @@
     let saving = $state(false);
     let formError = $state('');
 
-    let openJobs = $derived.by(() => {
-        return jobs.filter((job) =>
-            String(job.status ?? '').trim().toLowerCase() === 'open'
-        );
-    });
+    let openJobs = $derived(
+        jobs.filter((job) => String(job.status ?? '').toLowerCase() === 'open')
+    );
 
-    let availableApplications = $derived.by(() => {
-        const employeeApplicationIds = new Set(
-            employees.map((e) => e.originalApplicationId).filter(Boolean)
-        );
+    let hiredApplicationIds = $derived(
+        new Set(
+            employees
+                .map((employee) => employee.originalApplicationId)
+                .filter(Boolean)
+        )
+    );
 
-        const openJobIds = new Set(openJobs.map((j) => j.id));
+    let availableApplications = $derived(
+        applications.filter((application) => {
+            return !hiredApplicationIds.has(application.id);
+        })
+    );
 
-        return applications.filter((app) => {
-            return (
-                !employeeApplicationIds.has(app.id) &&
-                openJobIds.has(app.jobId)
-            );
-        });
-    });
+    let selectedApplication = $derived(
+        availableApplications.find((application) => application.id === selectedApplicationId)
+    );
 
-    let selectedJob = $derived.by(() => {
-        return openJobs.find((job) => job.id === selectedJobId);
-    });
-
-    let selectedApplication = $derived.by(() => {
-        return availableApplications.find((app) => app.id === selectedApplicationId);
-    });
+    let selectedJob = $derived(
+        openJobs.find((job) => job.id === selectedJobId)
+    );
 
     $effect(() => {
-        if (!loading && openJobs.length > 0 && !openJobs.some(j => j.id === selectedJobId)) {
-            selectedJobId = openJobs[0].id;
-        }
-        if (!loading && openJobs.length === 0) {
-            selectedJobId = '';
+        if (loading) return;
+
+        if (!selectedApplicationId || !availableApplications.some((app) => app.id === selectedApplicationId)) {
+            selectedApplicationId = availableApplications[0]?.id ?? '';
         }
     });
 
     $effect(() => {
-        if (!loading && availableApplications.length > 0 && !availableApplications.some(a => a.id === selectedApplicationId)) {
-            selectedApplicationId = availableApplications[0].id;
-        }
-        if (!loading && availableApplications.length === 0) {
-            selectedApplicationId = '';
+        if (loading) return;
+
+        if (!selectedJobId || !openJobs.some((job) => job.id === selectedJobId)) {
+            selectedJobId = openJobs[0]?.id ?? '';
         }
     });
 
     onMount(loadFormData);
+
+    function formatSalary(value?: number | null) {
+        if (value === null || value === undefined) return '-';
+
+        return value.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            maximumFractionDigits: 0
+        });
+    }
+
+    function closeForm() {
+        close();
+        notify.info('Add employee cancelled.');
+    }
 
     async function loadFormData() {
         try {
@@ -118,6 +104,7 @@
         } catch (err) {
             console.error('loadFormData error:', err);
             formError = 'Failed to load data.';
+            notify.error('Failed to load employee form data.');
         } finally {
             loading = false;
         }
@@ -128,47 +115,69 @@
 
         if (!selectedApplication) {
             formError = 'Please select an application.';
+            notify.warning('Please select an application.');
             return;
         }
 
         if (!selectedJob) {
             formError = 'Please select a job.';
+            notify.warning('Please select a job.');
             return;
         }
 
         try {
             saving = true;
 
-            const nameValue = selectedApplication.name;
-            const emailValue = selectedApplication.email;
-            const roleValue = selectedJob.title;
+            const filledJob: JobRow = {
+                ...selectedJob,
+                status: 'Filled'
+            };
+
+            const employee: EmployeeRow = {
+                id: crypto.randomUUID(),
+                name: selectedApplication.name,
+                email: selectedApplication.email,
+                role: selectedJob.title,
+                jobId: selectedJob.id,
+                originalApplicationId: selectedApplication.id,
+                job: filledJob,
+                originalApplication: selectedApplication
+            };
 
             await createEmployee({
-                name: nameValue,
-                email: emailValue,
-                role: roleValue,
+                name: employee.name,
+                email: employee.email,
+                role: employee.role,
                 jobId: selectedJob.id,
                 originalApplicationId: selectedApplication.id
             });
 
-            success({
-                id: crypto.randomUUID(),
-                name: nameValue,
-                email: emailValue,
-                role: roleValue,
-                jobId: selectedJob.id,
-                originalApplicationId: selectedApplication.id,
-                job: selectedJob,
-                originalApplication: selectedApplication
+            await updateJobStatus({
+                id: selectedJob.id,
+                status: 'Filled'
             });
+
+            jobs = jobs.map((job) => {
+                if (job.id !== selectedJob.id) return job;
+
+                return {
+                    ...job,
+                    status: 'Filled'
+                };
+            });
+
+            notify.success('Employee created and job marked as filled.');
+            success(employee);
         } catch (err) {
             console.error('handleSubmit error:', err);
             formError = 'Failed to create employee.';
+            notify.error('Failed to create employee.');
         } finally {
             saving = false;
         }
     }
 </script>
+
 <h2 class="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
     Add New Employee
 </h2>
@@ -189,11 +198,15 @@
                 bind:value={selectedApplicationId}
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             >
-                {#each availableApplications as application}
-                    <option value={application.id}>
-                        {application.name} — {application.email}
-                    </option>
-                {/each}
+                {#if availableApplications.length === 0}
+                    <option value="">No available applications</option>
+                {:else}
+                    {#each availableApplications as application}
+                        <option value={application.id}>
+                            {application.name} — {application.email}
+                        </option>
+                    {/each}
+                {/if}
             </select>
         </div>
 
@@ -212,7 +225,7 @@
                 </p>
 
                 <p class="text-gray-600 dark:text-gray-300">
-                    Applied For: {selectedApplication.job.title}
+                    Applied For: {selectedApplication.job?.title ?? '-'}
                 </p>
             </div>
         {/if}
@@ -227,11 +240,15 @@
                 bind:value={selectedJobId}
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             >
-                {#each openJobs as job}
-                    <option value={job.id}>
-                        {job.title} — {job.status}
-                    </option>
-                {/each}
+                {#if openJobs.length === 0}
+                    <option value="">No open jobs</option>
+                {:else}
+                    {#each openJobs as job}
+                        <option value={job.id}>
+                            {job.title} — {job.status}
+                        </option>
+                    {/each}
+                {/if}
             </select>
         </div>
 
@@ -250,7 +267,7 @@
                 </p>
 
                 <p class="text-gray-600 dark:text-gray-300">
-                    Salary: {selectedJob.salary || '-'}
+                    Salary: {formatSalary(selectedJob.salary)}
                 </p>
             </div>
         {/if}
@@ -266,7 +283,7 @@
 <div class="mt-8 flex justify-end space-x-3">
     <button
         type="button"
-        onclick={close}
+        onclick={closeForm}
         class="rounded-xl px-5 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
     >
         Cancel
@@ -275,7 +292,7 @@
     <button
         type="button"
         onclick={handleSubmit}
-        disabled={loading || saving}
+        disabled={loading || saving || !selectedApplication || !selectedJob}
         class="rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
     >
         {#if saving} Saving... {:else} Save Employee {/if}

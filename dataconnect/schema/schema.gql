@@ -1,7 +1,7 @@
 type Job @table {
     title: String!
     status: String!
-    salary: String
+    salary: Float
 }
 
 type Application @table {

@@ -1,0 +1,16 @@
+[debug] [2026-04-25T22:47:45.224Z] ----------------------------------------------------------------------
+[debug] [2026-04-25T22:47:45.226Z] Command:       C:\nvm4w\nodejs\node.exe C:\Users\Teesitin\AppData\Local\pnpm\global\5\.pnpm\firebase-tools@15.15.0_@typ_251048b82d655a46d823e42b42f09e1c\node_modules\firebase-tools\lib\bin\firebase.js dataconnect:sdk:generate
+[debug] [2026-04-25T22:47:45.226Z] CLI Version:   15.15.0
+[debug] [2026-04-25T22:47:45.226Z] Platform:      win32
+[debug] [2026-04-25T22:47:45.226Z] Node Version:  v24.14.1
+[debug] [2026-04-25T22:47:45.226Z] Time:          Sat Apr 25 2026 18:47:45 GMT-0400 (Eastern Daylight Time)
+[debug] [2026-04-25T22:47:45.226Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-04-25T22:47:46.118Z] defaultcredentials: writing to file C:\Users\Teesitin\AppData\Roaming\firebase\teesitin_russell_gmail.com_application_default_credentials.json
+[debug] [2026-04-25T22:47:46.274Z] Error: Command failed with exit code 1
+    at ChildProcess.<anonymous> (C:\Users\Teesitin\AppData\Local\pnpm\global\5\.pnpm\firebase-tools@15.15.0_@typ_251048b82d655a46d823e42b42f09e1c\node_modules\firebase-tools\lib\emulator\dataconnectEmulator.js:170:32)
+    at ChildProcess.emit (node:events:508:28)
+    at maybeClose (node:internal/child_process:1100:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:305:5)
+[error] 
+[error] Error: An unexpected error has occurred.
