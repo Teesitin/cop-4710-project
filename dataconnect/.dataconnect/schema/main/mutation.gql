@@ -1,14 +1,5 @@
 extend type Mutation {
   """
-  ✨ Insert a single `Applicant` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
-  """
-  applicant_insert(
-    """
-    Data object to insert into the table.
-    """
-    data: Applicant_Data!
-  ): Applicant_KeyOutput! @fdc_generated(from: "Applicant", purpose: INSERT_SINGLE)
-  """
   ✨ Insert a single `Application` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   application_insert(
@@ -44,15 +35,6 @@ extend type Mutation {
     """
     data: Job_Data!
   ): Job_KeyOutput! @fdc_generated(from: "Job", purpose: INSERT_SINGLE)
-  """
-  ✨ Insert `Applicant` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
-  """
-  applicant_insertMany(
-    """
-    List of data objects to insert into the table.
-    """
-    data: [Applicant_Data!]!
-  ): [Applicant_KeyOutput!]! @fdc_generated(from: "Applicant", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `Application` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -90,15 +72,6 @@ extend type Mutation {
     data: [Job_Data!]!
   ): [Job_KeyOutput!]! @fdc_generated(from: "Job", purpose: INSERT_MULTIPLE)
   """
-  ✨ Insert or update a single `Applicant` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Applicant`.
-  """
-  applicant_upsert(
-    """
-    Data object to insert or update if it already exists.
-    """
-    data: Applicant_Data!
-  ): Applicant_KeyOutput! @fdc_generated(from: "Applicant", purpose: UPSERT_SINGLE)
-  """
   ✨ Insert or update a single `Application` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Application`.
   """
   application_upsert(
@@ -135,15 +108,6 @@ extend type Mutation {
     data: Job_Data!
   ): Job_KeyOutput! @fdc_generated(from: "Job", purpose: UPSERT_SINGLE)
   """
-  ✨ Insert or update `Applicant` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Applicant`.
-  """
-  applicant_upsertMany(
-    """
-    List of data objects to insert or update if it already exists.
-    """
-    data: [Applicant_Data!]!
-  ): [Applicant_KeyOutput!]! @fdc_generated(from: "Applicant", purpose: UPSERT_MULTIPLE)
-  """
   ✨ Insert or update `Application` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Application`.
   """
   application_upsertMany(
@@ -179,30 +143,6 @@ extend type Mutation {
     """
     data: [Job_Data!]!
   ): [Job_KeyOutput!]! @fdc_generated(from: "Job", purpose: UPSERT_MULTIPLE)
-  """
-  ✨ Update a single `Applicant` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Applicant` or `null` if not found.
-  """
-  applicant_update(
-    """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
-    The key used to identify the object.
-    """
-    key: Applicant_Key
-
-    """
-    Fetch the first row based on the filters and ordering.
-    """
-    first: Applicant_FirstRow
-
-    """
-    Data object containing fields to be updated.
-    """
-    data: Applicant_Data!
-  ): Applicant_KeyOutput @fdc_generated(from: "Applicant", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `Application` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Application` or `null` if not found.
   """
@@ -300,25 +240,6 @@ extend type Mutation {
     data: Job_Data!
   ): Job_KeyOutput @fdc_generated(from: "Job", purpose: UPDATE_SINGLE)
   """
-  ✨ Update `Applicant` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
-  """
-  applicant_updateMany(
-    """
-    Filter condition to specify which rows to update.
-    """
-    where: Applicant_Filter
-
-    """
-    Set to true to update all rows.
-    """
-    all: Boolean = false
-
-    """
-    Data object containing fields to update.
-    """
-    data: Applicant_Data!
-  ): Int! @fdc_generated(from: "Applicant", purpose: UPDATE_MULTIPLE)
-  """
   ✨ Update `Application` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   application_updateMany(
@@ -395,25 +316,6 @@ extend type Mutation {
     data: Job_Data!
   ): Int! @fdc_generated(from: "Job", purpose: UPDATE_MULTIPLE)
   """
-  ✨ Delete a single `Applicant` based on `id`, `key` or `first` and return its key (or `null` if not found).
-  """
-  applicant_delete(
-    """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
-    The key used to identify the object.
-    """
-    key: Applicant_Key
-
-    """
-    Fetch the first row based on the filters and ordering.
-    """
-    first: Applicant_FirstRow
-  ): Applicant_KeyOutput @fdc_generated(from: "Applicant", purpose: DELETE_SINGLE)
-  """
   ✨ Delete a single `Application` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
   application_delete(
@@ -489,20 +391,6 @@ extend type Mutation {
     """
     first: Job_FirstRow
   ): Job_KeyOutput @fdc_generated(from: "Job", purpose: DELETE_SINGLE)
-  """
-  ✨ Delete `Applicant` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
-  """
-  applicant_deleteMany(
-    """
-    Filter condition to specify which rows to delete.
-    """
-    where: Applicant_Filter
-
-    """
-    Set to true to delete all rows.
-    """
-    all: Boolean = false
-  ): Int! @fdc_generated(from: "Applicant", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `Application` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """

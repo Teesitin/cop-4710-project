@@ -1,24 +1,5 @@
 extend type Query {
   """
-  ✨ Look up a single `Applicant` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
-  """
-  applicant(
-    """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
-    The key used to identify the object.
-    """
-    key: Applicant_Key
-
-    """
-    Fetch the first row based on the filters and ordering.
-    """
-    first: Applicant_FirstRow
-  ): Applicant @fdc_generated(from: "Applicant", purpose: QUERY_SINGLE)
-  """
   ✨ Look up a single `Application` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
   application(
@@ -94,40 +75,6 @@ extend type Query {
     """
     first: Job_FirstRow
   ): Job @fdc_generated(from: "Job", purpose: QUERY_SINGLE)
-  """
-  ✨ List `Applicant` objects in the table and return selected fields, optionally filtered by `where` conditions
-  """
-  applicants(
-    """
-    Filter condition to narrow down the query results.
-    """
-    where: Applicant_Filter
-
-    """
-    Order the query results by specific fields.
-    """
-    orderBy: [Applicant_Order!]
-
-    """
-    Number of rows to skip before starting to return the results.
-    """
-    offset: Int
-
-    """
-    Maximum number of rows to return (defaults to 100 rows).
-    """
-    limit: Int = 100
-
-    """
-    Set to true to return distinct results.
-    """
-    distinct: Boolean = false
-
-    """
-    Filter condition to apply to the groups of aggregate queries.
-    """
-    having: Applicant_Having
-  ): [Applicant!]! @fdc_generated(from: "Applicant", purpose: QUERY_MULTIPLE)
   """
   ✨ List `Application` objects in the table and return selected fields, optionally filtered by `where` conditions
   """

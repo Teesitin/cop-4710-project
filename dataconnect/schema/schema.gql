@@ -24,7 +24,7 @@ type Employee @table {
 type Interview @table {
     application: Application!
     interviewerName: String
-    interviewStartDate: Date
-    interviewEndDate: Date
+    interviewStartDate: Timestamp
+    interviewEndDate: Timestamp
     interviewModality: String
 }

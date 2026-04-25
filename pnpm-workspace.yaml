@@ -4,4 +4,4 @@ onlyBuiltDependencies:
   - protobufjs
 
 overrides:
-  dataconnect-generated: link:../../Users/Teesitin/AppData/Local/pnpm/global/5/node_modules/src/dataconnect-generated
+  dataconnect-generated: link:../../Users/mosco/AppData/Local/pnpm/global/5/node_modules/src/dataconnect-generated
