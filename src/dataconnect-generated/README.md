@@ -75,7 +75,7 @@ Below are examples of how to use the `example` connector's generated functions t
 ## ListJobs
 You can execute the `ListJobs` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listJobs(options?: ExecuteQueryOptions): QueryPromise<ListJobsData, undefined>;
+listJobs(): QueryPromise<ListJobsData, undefined>;
 
 interface ListJobsRef {
   ...
@@ -86,7 +86,7 @@ export const listJobsRef: ListJobsRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listJobs(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListJobsData, undefined>;
+listJobs(dc: DataConnect): QueryPromise<ListJobsData, undefined>;
 
 interface ListJobsRef {
   ...
@@ -171,7 +171,7 @@ executeQuery(ref).then((response) => {
 ## ListApplications
 You can execute the `ListApplications` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listApplications(options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, undefined>;
+listApplications(): QueryPromise<ListApplicationsData, undefined>;
 
 interface ListApplicationsRef {
   ...
@@ -182,7 +182,7 @@ export const listApplicationsRef: ListApplicationsRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listApplications(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, undefined>;
+listApplications(dc: DataConnect): QueryPromise<ListApplicationsData, undefined>;
 
 interface ListApplicationsRef {
   ...
@@ -276,7 +276,7 @@ executeQuery(ref).then((response) => {
 ## GetApplication
 You can execute the `GetApplication` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-getApplication(vars: GetApplicationVariables, options?: ExecuteQueryOptions): QueryPromise<GetApplicationData, GetApplicationVariables>;
+getApplication(vars: GetApplicationVariables): QueryPromise<GetApplicationData, GetApplicationVariables>;
 
 interface GetApplicationRef {
   ...
@@ -287,7 +287,7 @@ export const getApplicationRef: GetApplicationRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-getApplication(dc: DataConnect, vars: GetApplicationVariables, options?: ExecuteQueryOptions): QueryPromise<GetApplicationData, GetApplicationVariables>;
+getApplication(dc: DataConnect, vars: GetApplicationVariables): QueryPromise<GetApplicationData, GetApplicationVariables>;
 
 interface GetApplicationRef {
   ...
@@ -399,7 +399,7 @@ executeQuery(ref).then((response) => {
 ## ListEmployees
 You can execute the `ListEmployees` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listEmployees(options?: ExecuteQueryOptions): QueryPromise<ListEmployeesData, undefined>;
+listEmployees(): QueryPromise<ListEmployeesData, undefined>;
 
 interface ListEmployeesRef {
   ...
@@ -410,7 +410,7 @@ export const listEmployeesRef: ListEmployeesRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listEmployees(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListEmployeesData, undefined>;
+listEmployees(dc: DataConnect): QueryPromise<ListEmployeesData, undefined>;
 
 interface ListEmployeesRef {
   ...
@@ -512,7 +512,7 @@ executeQuery(ref).then((response) => {
 ## ListInterviews
 You can execute the `ListInterviews` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listInterviews(options?: ExecuteQueryOptions): QueryPromise<ListInterviewsData, undefined>;
+listInterviews(): QueryPromise<ListInterviewsData, undefined>;
 
 interface ListInterviewsRef {
   ...
@@ -523,7 +523,7 @@ export const listInterviewsRef: ListInterviewsRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listInterviews(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListInterviewsData, undefined>;
+listInterviews(dc: DataConnect): QueryPromise<ListInterviewsData, undefined>;
 
 interface ListInterviewsRef {
   ...
@@ -556,8 +556,8 @@ export interface ListInterviewsData {
       };
     } & Application_Key;
       interviewerName?: string | null;
-      interviewStartDate?: DateString | null;
-      interviewEndDate?: DateString | null;
+      interviewStartDate?: TimestampString | null;
+      interviewEndDate?: TimestampString | null;
       interviewModality?: string | null;
   } & Interview_Key)[];
 }
@@ -1711,8 +1711,8 @@ The `CreateInterview` mutation requires an argument of type `CreateInterviewVari
 export interface CreateInterviewVariables {
   applicationId: UUIDString;
   interviewerName?: string | null;
-  interviewStartDate?: DateString | null;
-  interviewEndDate?: DateString | null;
+  interviewStartDate?: TimestampString | null;
+  interviewEndDate?: TimestampString | null;
   interviewModality?: string | null;
 }
 ```
@@ -1941,8 +1941,8 @@ The `UpdateInterview` mutation requires an argument of type `UpdateInterviewVari
 export interface UpdateInterviewVariables {
   id: UUIDString;
   interviewerName?: string | null;
-  interviewStartDate?: DateString | null;
-  interviewEndDate?: DateString | null;
+  interviewStartDate?: TimestampString | null;
+  interviewEndDate?: TimestampString | null;
   interviewModality?: string | null;
 }
 ```

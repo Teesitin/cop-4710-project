@@ -1,7 +1,9 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { executeMutation, executeQuery } from 'firebase/data-connect';
-    import {createInterviewRef, listApplicationsRef } from '../../../dataconnect-generated';
+    import {createInterviewRef, listApplicationsRef, connectorConfig } from '../../../dataconnect-generated';
+    import { getDataConnect } from 'firebase/data-connect';
+    import { app } from '../../../lib/firebase';
 
         let { onClose, onSuccess } = $props<{
         onClose: () => void;
@@ -26,24 +28,25 @@
 
     const modalities = ['In-Person', 'Online'];
 
-    onMount(async () => {
-        try{
-            const result = await executeQuery(listApplicationsRef());
-            applications = (result.data.applications ?? []).map((a: any) => ({
-                id: a.id,
-                applicantName: a.applicant.name,
-                jobTitle: a.job.title
-            }));
-            if(applications.length > 0) {
-                selectedApplicationId = applications[0].id;
-            }
-        }catch (err) {
-            console.error('Failed to load applications: ', err);
-            formError = 'Could not load application.';
-        }finally{
-            loadingApps = false;
+   onMount(async () => {
+    try {
+        const dc = getDataConnect(app, connectorConfig);
+        const result = await executeQuery(listApplicationsRef(dc));
+        applications = (result.data.applications ?? []).map((a: any) => ({
+            id: a.id,
+            applicantName: a.name,
+            jobTitle: a.job.title
+        }));
+        if (applications.length > 0) {
+            selectedApplicationId = applications[0].id;
         }
-    });
+    } catch (err) {
+        console.error('Failed to load applications: ', err);
+        formError = 'Could not load applications.';
+    } finally {
+        loadingApps = false;
+    }
+});
 
     async function handleSubmit() {
         formError = '';
@@ -60,8 +63,8 @@
                 createInterviewRef({
                     applicationId: selectedApplicationId,
                     interviewerName: interviewerName.trim() || null,
-                    interviewStartDate: interviewStartDate || null,
-                    interviewEndDate: interviewEndDate || null,
+                    interviewStartDate: interviewStartDate ? new Date(interviewStartDate).toISOString() : null,
+                    interviewEndDate: interviewEndDate ? new Date(interviewEndDate).toISOString() : null,
                     interviewModality: interviewModality
                 })
             );
@@ -74,8 +77,8 @@
                 applicantName: selectedApp?.applicantName ?? '',
                 jobTitle: selectedApp?.jobTitle ?? '',
                 interviewerName: interviewerName.trim() || null,
-                interviewStartDate: interviewStartDate || null,
-                interviewEndDate: interviewEndDate || null,
+                interviewStartDate: interviewStartDate ? new Date(interviewStartDate).toISOString() : null,
+                interviewEndDate: interviewEndDate ? new Date(interviewEndDate).toISOString() : null,
                 interviewModality: interviewModality
             });
 
@@ -124,7 +127,7 @@
         <label for="interviewStartDate" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
         <input
             id="interviewStartDate"
-            type="date"
+            type="datetime-local"
             bind:value={interviewStartDate}
             class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2.5 text-sm text-gray-900 dark:text-white outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
         />
@@ -134,7 +137,7 @@
         <label for="interviewEndDate" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
         <input
             id="interviewEndDate"
-            type="date"
+            type="datetime-local"
             bind:value={interviewEndDate}
             class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2.5 text-sm text-gray-900 dark:text-white outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
         />

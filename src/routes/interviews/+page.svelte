@@ -1,8 +1,13 @@
 <script lang="ts">
-  import AddInterview from "$lib/assets/forms/AddInterview.svelte";
-
-
-
+    import { onMount } from 'svelte';
+    import { initializeApp } from 'firebase/app';
+    import { getDataConnect, executeQuery, executeMutation } from 'firebase/data-connect';
+    import AddInterview from "$lib/assets/forms/AddInterview.svelte";
+    import {
+        listInterviewsRef,
+        deleteInterviewRef,
+        connectorConfig,
+    } from '../../dataconnect-generated';
 
     type interviewRow = {
         id: string;
@@ -18,11 +23,46 @@
     let interviews = $state<interviewRow[]>([]);
     let searchQuery = $state('');
     let showAddModal = $state(false);
+    let error = $state('');
+    let loading = $state(true);
 
     function handleInterviewAdded(newInterview: interviewRow) {
         interviews = [newInterview, ...interviews];
         showAddModal = false;
     };
+
+    let filteredInterviews = $derived.by(() => {
+        const query = searchQuery.toLowerCase();
+        return interviews.filter(i =>
+            (i.applicantName ?? '').toLowerCase().includes(query) ||
+            (i.jobTitle ?? '').toLowerCase().includes(query) ||
+            (i.interviewerName ?? '').toLowerCase().includes(query) ||
+            (i.interviewModality ?? '').toLowerCase().includes(query)
+        );
+    });
+    
+    async function loadInterviews() {
+        try {
+            loading = true;
+            error = '';
+            const result = await executeQuery(listInterviewsRef());
+            interviews = (result.data.interviews ?? []).reverse().map((i: any) => ({
+                id: i.id,
+                applicationId: i.application.id,
+                applicantName: i.application.name,
+                jobTitle: i.application.job.title,
+                interviewerName: i.interviewerName ?? null,
+                interviewStartDate: i.interviewStartDate ?? null,
+                interviewEndDate: i.interviewEndDate ?? null,
+                interviewModality: i.interviewModality ?? null,
+            }));
+        } catch (err) {
+            console.error('loadInterviews error:', err);
+            error = 'Failed to load interviews.';
+        } finally {
+            loading = false;
+        }
+    }
 </script>
 
 <svelte:head>
@@ -72,4 +112,5 @@
             />
         </div>
     </div>
+    
 {/if}
