@@ -59,6 +59,14 @@ export interface DeleteApplicationVariables {
   id: UUIDString;
 }
 
+export interface DeleteEmployeeData {
+  employee_delete?: Employee_Key | null;
+}
+
+export interface DeleteEmployeeVariables {
+  id: UUIDString;
+}
+
 export interface DeleteJobData {
   job_delete?: Job_Key | null;
 }
@@ -178,6 +186,17 @@ export interface UpdateApplicationVariables {
   salaryProposed?: number | null;
   status: string;
   appliedDate: DateString;
+}
+
+export interface UpdateEmployeeData {
+  employee_update?: Employee_Key | null;
+}
+
+export interface UpdateEmployeeVariables {
+  id: UUIDString;
+  name: string;
+  email: string;
+  role: string;
 }
 
 export interface UpdateJobData {
@@ -355,4 +374,28 @@ export const createEmployeeRef: CreateEmployeeRef;
 
 export function createEmployee(vars: CreateEmployeeVariables): MutationPromise<CreateEmployeeData, CreateEmployeeVariables>;
 export function createEmployee(dc: DataConnect, vars: CreateEmployeeVariables): MutationPromise<CreateEmployeeData, CreateEmployeeVariables>;
+
+interface UpdateEmployeeRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateEmployeeVariables): MutationRef<UpdateEmployeeData, UpdateEmployeeVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateEmployeeVariables): MutationRef<UpdateEmployeeData, UpdateEmployeeVariables>;
+  operationName: string;
+}
+export const updateEmployeeRef: UpdateEmployeeRef;
+
+export function updateEmployee(vars: UpdateEmployeeVariables): MutationPromise<UpdateEmployeeData, UpdateEmployeeVariables>;
+export function updateEmployee(dc: DataConnect, vars: UpdateEmployeeVariables): MutationPromise<UpdateEmployeeData, UpdateEmployeeVariables>;
+
+interface DeleteEmployeeRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteEmployeeVariables): MutationRef<DeleteEmployeeData, DeleteEmployeeVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: DeleteEmployeeVariables): MutationRef<DeleteEmployeeData, DeleteEmployeeVariables>;
+  operationName: string;
+}
+export const deleteEmployeeRef: DeleteEmployeeRef;
+
+export function deleteEmployee(vars: DeleteEmployeeVariables): MutationPromise<DeleteEmployeeData, DeleteEmployeeVariables>;
+export function deleteEmployee(dc: DataConnect, vars: DeleteEmployeeVariables): MutationPromise<DeleteEmployeeData, DeleteEmployeeVariables>;
 

@@ -186,3 +186,20 @@ mutation CreateEmployee(
     originalApplicationId: $originalApplicationId
   })
 }
+
+mutation UpdateEmployee(
+  $id: UUID!
+  $name: String!
+  $email: String!
+  $role: String!
+) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  employee_update(id: $id, data: {
+    name: $name
+    email: $email
+    role: $role
+  })
+}
+
+mutation DeleteEmployee($id: UUID!) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  employee_delete(id: $id)
+}

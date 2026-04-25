@@ -170,3 +170,27 @@ export function createEmployee(dcOrVars, vars) {
   return executeMutation(createEmployeeRef(dcInstance, inputVars));
 }
 
+export const updateEmployeeRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateEmployee', inputVars);
+}
+updateEmployeeRef.operationName = 'UpdateEmployee';
+
+export function updateEmployee(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateEmployeeRef(dcInstance, inputVars));
+}
+
+export const deleteEmployeeRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'DeleteEmployee', inputVars);
+}
+deleteEmployeeRef.operationName = 'DeleteEmployee';
+
+export function deleteEmployee(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(deleteEmployeeRef(dcInstance, inputVars));
+}
+

@@ -1,11 +1,13 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import '$lib/firebase';
 
     import {
-        listEmployees,
-        connectorConfig
+        listEmployees
     } from '../../dataconnect-generated';
+
     import AddEmployee from '$lib/assets/forms/AddEmployee.svelte';
+    import { notify } from '$lib/assets/components/notificationState.svelte';
 
     type EmployeeRow = {
         id: string;
@@ -26,6 +28,7 @@
     function handleEmployeeAdded(newEmployee: EmployeeRow) {
         employees = [newEmployee, ...employees];
         showAddModal = false;
+        notify.success('Employee added.');
     }
 
     async function loadEmployees() {
@@ -36,12 +39,24 @@
             const result = await listEmployees();
             employees = result.data.employees ?? [];
 
+            notify.success('Employees loaded.');
         } catch (err) {
             console.error('loadEmployees error:', err);
             error = 'Failed to load employees.';
+            notify.error('Failed to load employees.');
         } finally {
             loading = false;
         }
+    }
+
+    function openAddModal() {
+        showAddModal = true;
+        notify.info('Add employee form opened.');
+    }
+
+    function closeAddModal() {
+        showAddModal = false;
+        notify.info('Add employee cancelled.');
     }
 </script>
 
