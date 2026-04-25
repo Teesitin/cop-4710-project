@@ -40,7 +40,7 @@
             (i.interviewModality ?? '').toLowerCase().includes(query)
         );
     });
-    
+
     async function loadInterviews() {
         try {
             loading = true;
@@ -63,6 +63,23 @@
             loading = false;
         }
     }
+    async function handleDelete(id: string) {
+        if (!confirm('Are you sure you want to delete this interview?')) return;
+        try {
+            await executeMutation(deleteInterviewRef({ id }));
+            interviews = interviews.filter(i => i.id !== id);
+        } catch (err) {
+            console.error('Failed to delete interview', err);
+            alert('Could not delete interview.');
+        }
+    }
+    function formatDate(ts: string | null) {
+        if (!ts) return '-';
+        return new Date(ts).toLocaleString();
+    }
+    onMount(() => {
+        loadInterviews();
+    });
 </script>
 
 <svelte:head>
@@ -96,6 +113,56 @@
             </button>
         </div>    
     </div>
+    {#if loading}
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Loading interviews...</p>
+        </div>
+    {:else if error}
+        <div class="rounded-2xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 p-6 shadow-sm">
+            <p class="text-sm font-medium text-red-700 dark:text-red-400">{error}</p>
+        </div>
+    {:else if filteredInterviews.length === 0}
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                {#if interviews.length === 0}
+                    No interviews found. Click "+ Add Interview" to get started!
+                {:else}
+                    No interviews match your search.
+                {/if}
+            </p>
+        </div>
+    {:else}
+        <div class="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-900/50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">Applicant</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">Job</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">Interviewer</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">Start</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">End</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">Modality</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+                    {#each filteredInterviews as interview (interview.id)}
+                        <tr class="transition hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                            <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{interview.applicantName}</td>
+                            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-300">{interview.jobTitle}</td>
+                            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-300">{interview.interviewerName || '-'}</td>
+                            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-300">{formatDate(interview.interviewStartDate)}</td>
+                            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-300">{formatDate(interview.interviewEndDate)}</td>
+                            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-300">{interview.interviewModality || '-'}</td>
+                            <td class="whitespace-nowrap px-6 py-4 text-right">
+                                <button onclick={() => handleDelete(interview.id)} class="text-sm font-medium text-red-500 hover:text-red-400 transition">Delete</button>
+                            </td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        </div>
+    {/if}
 </section>
 
 {#if showAddModal}
