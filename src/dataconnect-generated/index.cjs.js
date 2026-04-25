@@ -42,6 +42,20 @@ exports.createJob = function createJob(dcOrVars, vars) {
 }
 ;
 
+const updateJobRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateJob', inputVars);
+}
+updateJobRef.operationName = 'UpdateJob';
+exports.updateJobRef = updateJobRef;
+
+exports.updateJob = function updateJob(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateJobRef(dcInstance, inputVars));
+}
+;
+
 const updateJobStatusRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -70,17 +84,89 @@ exports.deleteJob = function deleteJob(dcOrVars, vars) {
 }
 ;
 
-const updateJobRef = (dcOrVars, vars) => {
+const listApplicationsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListApplications');
+}
+listApplicationsRef.operationName = 'ListApplications';
+exports.listApplicationsRef = listApplicationsRef;
+
+exports.listApplications = function listApplications(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listApplicationsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+;
+
+const getApplicationRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'UpdateJob', inputVars);
+  return queryRef(dcInstance, 'GetApplication', inputVars);
 }
-updateJobRef.operationName = 'UpdateJob';
-exports.updateJobRef = updateJobRef;
+getApplicationRef.operationName = 'GetApplication';
+exports.getApplicationRef = getApplicationRef;
 
-exports.updateJob = function updateJob(dcOrVars, vars) {
+exports.getApplication = function getApplication(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(getApplicationRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+;
+
+const createApplicationRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateApplication', inputVars);
+}
+createApplicationRef.operationName = 'CreateApplication';
+exports.createApplicationRef = createApplicationRef;
+
+exports.createApplication = function createApplication(dcOrVars, vars) {
   const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
-  return executeMutation(updateJobRef(dcInstance, inputVars));
+  return executeMutation(createApplicationRef(dcInstance, inputVars));
+}
+;
+
+const updateApplicationRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateApplication', inputVars);
+}
+updateApplicationRef.operationName = 'UpdateApplication';
+exports.updateApplicationRef = updateApplicationRef;
+
+exports.updateApplication = function updateApplication(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateApplicationRef(dcInstance, inputVars));
+}
+;
+
+const updateApplicationStatusRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateApplicationStatus', inputVars);
+}
+updateApplicationStatusRef.operationName = 'UpdateApplicationStatus';
+exports.updateApplicationStatusRef = updateApplicationStatusRef;
+
+exports.updateApplicationStatus = function updateApplicationStatus(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateApplicationStatusRef(dcInstance, inputVars));
+}
+;
+
+const deleteApplicationRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'DeleteApplication', inputVars);
+}
+deleteApplicationRef.operationName = 'DeleteApplication';
+exports.deleteApplicationRef = deleteApplicationRef;
+
+exports.deleteApplication = function deleteApplication(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(deleteApplicationRef(dcInstance, inputVars));
 }
 ;
 
@@ -99,31 +185,16 @@ exports.listEmployees = function listEmployees(dcOrOptions, options) {
 }
 ;
 
-const listApplicationsRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
-  dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListApplications');
-}
-listApplicationsRef.operationName = 'ListApplications';
-exports.listApplicationsRef = listApplicationsRef;
-
-exports.listApplications = function listApplications(dcOrOptions, options) {
-  
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
-  return executeQuery(listApplicationsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
-}
-;
-
-const updateApplicationStatusRef = (dcOrVars, vars) => {
+const createEmployeeRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'UpdateApplicationStatus', inputVars);
+  return mutationRef(dcInstance, 'CreateEmployee', inputVars);
 }
-updateApplicationStatusRef.operationName = 'UpdateApplicationStatus';
-exports.updateApplicationStatusRef = updateApplicationStatusRef;
+createEmployeeRef.operationName = 'CreateEmployee';
+exports.createEmployeeRef = createEmployeeRef;
 
-exports.updateApplicationStatus = function updateApplicationStatus(dcOrVars, vars) {
+exports.createEmployee = function createEmployee(dcOrVars, vars) {
   const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
-  return executeMutation(updateApplicationStatusRef(dcInstance, inputVars));
+  return executeMutation(createEmployeeRef(dcInstance, inputVars));
 }
 ;

@@ -11,14 +11,34 @@ export type DateString = string;
 
 
 
-export interface Applicant_Key {
-  id: UUIDString;
-  __typename?: 'Applicant_Key';
-}
-
 export interface Application_Key {
   id: UUIDString;
   __typename?: 'Application_Key';
+}
+
+export interface CreateApplicationData {
+  application_insert: Application_Key;
+}
+
+export interface CreateApplicationVariables {
+  name: string;
+  email: string;
+  jobId: UUIDString;
+  salaryProposed?: number | null;
+  status: string;
+  appliedDate: DateString;
+}
+
+export interface CreateEmployeeData {
+  employee_insert: Employee_Key;
+}
+
+export interface CreateEmployeeVariables {
+  name: string;
+  email: string;
+  role: string;
+  jobId: UUIDString;
+  originalApplicationId: UUIDString;
 }
 
 export interface CreateJobData {
@@ -29,6 +49,14 @@ export interface CreateJobVariables {
   title: string;
   status: string;
   salary?: string | null;
+}
+
+export interface DeleteApplicationData {
+  application_delete?: Application_Key | null;
+}
+
+export interface DeleteApplicationVariables {
+  id: UUIDString;
 }
 
 export interface DeleteJobData {
@@ -44,6 +72,28 @@ export interface Employee_Key {
   __typename?: 'Employee_Key';
 }
 
+export interface GetApplicationData {
+  application?: {
+    id: UUIDString;
+    name: string;
+    email: string;
+    jobId: UUIDString;
+    job: {
+      id: UUIDString;
+      title: string;
+      status: string;
+      salary?: string | null;
+    } & Job_Key;
+      salaryProposed?: number | null;
+      status: string;
+      appliedDate: DateString;
+  } & Application_Key;
+}
+
+export interface GetApplicationVariables {
+  id: UUIDString;
+}
+
 export interface Interview_Key {
   id: UUIDString;
   __typename?: 'Interview_Key';
@@ -57,22 +107,18 @@ export interface Job_Key {
 export interface ListApplicationsData {
   applications: ({
     id: UUIDString;
-    applicantId: UUIDString;
+    name: string;
+    email: string;
     jobId: UUIDString;
-    applicant: {
+    job: {
       id: UUIDString;
-      name: string;
-      email: string;
-    } & Applicant_Key;
-      job: {
-        id: UUIDString;
-        title: string;
-        status: string;
-        salary?: string | null;
-      } & Job_Key;
-        salaryProposed?: number | null;
-        status: string;
-        appliedDate: DateString;
+      title: string;
+      status: string;
+      salary?: string | null;
+    } & Job_Key;
+      salaryProposed?: number | null;
+      status: string;
+      appliedDate: DateString;
   } & Application_Key)[];
 }
 
@@ -82,6 +128,23 @@ export interface ListEmployeesData {
     name: string;
     email: string;
     role: string;
+    jobId: UUIDString;
+    originalApplicationId: UUIDString;
+    job: {
+      id: UUIDString;
+      title: string;
+      status: string;
+      salary?: string | null;
+    } & Job_Key;
+      originalApplication: {
+        id: UUIDString;
+        name: string;
+        email: string;
+        status: string;
+        salaryProposed?: number | null;
+        appliedDate: DateString;
+        jobId: UUIDString;
+      } & Application_Key;
   } & Employee_Key)[];
 }
 
@@ -94,6 +157,10 @@ export interface ListJobsData {
   } & Job_Key)[];
 }
 
+export interface UpdateApplicationData {
+  application_update?: Application_Key | null;
+}
+
 export interface UpdateApplicationStatusData {
   application_update?: Application_Key | null;
 }
@@ -101,6 +168,16 @@ export interface UpdateApplicationStatusData {
 export interface UpdateApplicationStatusVariables {
   id: UUIDString;
   status: string;
+}
+
+export interface UpdateApplicationVariables {
+  id: UUIDString;
+  name: string;
+  email: string;
+  jobId: UUIDString;
+  salaryProposed?: number | null;
+  status: string;
+  appliedDate: DateString;
 }
 
 export interface UpdateJobData {
@@ -147,6 +224,18 @@ export const createJobRef: CreateJobRef;
 export function createJob(vars: CreateJobVariables): MutationPromise<CreateJobData, CreateJobVariables>;
 export function createJob(dc: DataConnect, vars: CreateJobVariables): MutationPromise<CreateJobData, CreateJobVariables>;
 
+interface UpdateJobRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateJobVariables): MutationRef<UpdateJobData, UpdateJobVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateJobVariables): MutationRef<UpdateJobData, UpdateJobVariables>;
+  operationName: string;
+}
+export const updateJobRef: UpdateJobRef;
+
+export function updateJob(vars: UpdateJobVariables): MutationPromise<UpdateJobData, UpdateJobVariables>;
+export function updateJob(dc: DataConnect, vars: UpdateJobVariables): MutationPromise<UpdateJobData, UpdateJobVariables>;
+
 interface UpdateJobStatusRef {
   /* Allow users to create refs without passing in DataConnect */
   (vars: UpdateJobStatusVariables): MutationRef<UpdateJobStatusData, UpdateJobStatusVariables>;
@@ -171,17 +260,77 @@ export const deleteJobRef: DeleteJobRef;
 export function deleteJob(vars: DeleteJobVariables): MutationPromise<DeleteJobData, DeleteJobVariables>;
 export function deleteJob(dc: DataConnect, vars: DeleteJobVariables): MutationPromise<DeleteJobData, DeleteJobVariables>;
 
-interface UpdateJobRef {
+interface ListApplicationsRef {
   /* Allow users to create refs without passing in DataConnect */
-  (vars: UpdateJobVariables): MutationRef<UpdateJobData, UpdateJobVariables>;
+  (): QueryRef<ListApplicationsData, undefined>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: UpdateJobVariables): MutationRef<UpdateJobData, UpdateJobVariables>;
+  (dc: DataConnect): QueryRef<ListApplicationsData, undefined>;
   operationName: string;
 }
-export const updateJobRef: UpdateJobRef;
+export const listApplicationsRef: ListApplicationsRef;
 
-export function updateJob(vars: UpdateJobVariables): MutationPromise<UpdateJobData, UpdateJobVariables>;
-export function updateJob(dc: DataConnect, vars: UpdateJobVariables): MutationPromise<UpdateJobData, UpdateJobVariables>;
+export function listApplications(options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, undefined>;
+export function listApplications(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, undefined>;
+
+interface GetApplicationRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetApplicationVariables): QueryRef<GetApplicationData, GetApplicationVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetApplicationVariables): QueryRef<GetApplicationData, GetApplicationVariables>;
+  operationName: string;
+}
+export const getApplicationRef: GetApplicationRef;
+
+export function getApplication(vars: GetApplicationVariables, options?: ExecuteQueryOptions): QueryPromise<GetApplicationData, GetApplicationVariables>;
+export function getApplication(dc: DataConnect, vars: GetApplicationVariables, options?: ExecuteQueryOptions): QueryPromise<GetApplicationData, GetApplicationVariables>;
+
+interface CreateApplicationRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateApplicationVariables): MutationRef<CreateApplicationData, CreateApplicationVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateApplicationVariables): MutationRef<CreateApplicationData, CreateApplicationVariables>;
+  operationName: string;
+}
+export const createApplicationRef: CreateApplicationRef;
+
+export function createApplication(vars: CreateApplicationVariables): MutationPromise<CreateApplicationData, CreateApplicationVariables>;
+export function createApplication(dc: DataConnect, vars: CreateApplicationVariables): MutationPromise<CreateApplicationData, CreateApplicationVariables>;
+
+interface UpdateApplicationRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateApplicationVariables): MutationRef<UpdateApplicationData, UpdateApplicationVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateApplicationVariables): MutationRef<UpdateApplicationData, UpdateApplicationVariables>;
+  operationName: string;
+}
+export const updateApplicationRef: UpdateApplicationRef;
+
+export function updateApplication(vars: UpdateApplicationVariables): MutationPromise<UpdateApplicationData, UpdateApplicationVariables>;
+export function updateApplication(dc: DataConnect, vars: UpdateApplicationVariables): MutationPromise<UpdateApplicationData, UpdateApplicationVariables>;
+
+interface UpdateApplicationStatusRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateApplicationStatusVariables): MutationRef<UpdateApplicationStatusData, UpdateApplicationStatusVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateApplicationStatusVariables): MutationRef<UpdateApplicationStatusData, UpdateApplicationStatusVariables>;
+  operationName: string;
+}
+export const updateApplicationStatusRef: UpdateApplicationStatusRef;
+
+export function updateApplicationStatus(vars: UpdateApplicationStatusVariables): MutationPromise<UpdateApplicationStatusData, UpdateApplicationStatusVariables>;
+export function updateApplicationStatus(dc: DataConnect, vars: UpdateApplicationStatusVariables): MutationPromise<UpdateApplicationStatusData, UpdateApplicationStatusVariables>;
+
+interface DeleteApplicationRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteApplicationVariables): MutationRef<DeleteApplicationData, DeleteApplicationVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: DeleteApplicationVariables): MutationRef<DeleteApplicationData, DeleteApplicationVariables>;
+  operationName: string;
+}
+export const deleteApplicationRef: DeleteApplicationRef;
+
+export function deleteApplication(vars: DeleteApplicationVariables): MutationPromise<DeleteApplicationData, DeleteApplicationVariables>;
+export function deleteApplication(dc: DataConnect, vars: DeleteApplicationVariables): MutationPromise<DeleteApplicationData, DeleteApplicationVariables>;
 
 interface ListEmployeesRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -195,27 +344,15 @@ export const listEmployeesRef: ListEmployeesRef;
 export function listEmployees(options?: ExecuteQueryOptions): QueryPromise<ListEmployeesData, undefined>;
 export function listEmployees(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListEmployeesData, undefined>;
 
-interface ListApplicationsRef {
+interface CreateEmployeeRef {
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListApplicationsData, undefined>;
+  (vars: CreateEmployeeVariables): MutationRef<CreateEmployeeData, CreateEmployeeVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListApplicationsData, undefined>;
+  (dc: DataConnect, vars: CreateEmployeeVariables): MutationRef<CreateEmployeeData, CreateEmployeeVariables>;
   operationName: string;
 }
-export const listApplicationsRef: ListApplicationsRef;
+export const createEmployeeRef: CreateEmployeeRef;
 
-export function listApplications(options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, undefined>;
-export function listApplications(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, undefined>;
-
-interface UpdateApplicationStatusRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: UpdateApplicationStatusVariables): MutationRef<UpdateApplicationStatusData, UpdateApplicationStatusVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: UpdateApplicationStatusVariables): MutationRef<UpdateApplicationStatusData, UpdateApplicationStatusVariables>;
-  operationName: string;
-}
-export const updateApplicationStatusRef: UpdateApplicationStatusRef;
-
-export function updateApplicationStatus(vars: UpdateApplicationStatusVariables): MutationPromise<UpdateApplicationStatusData, UpdateApplicationStatusVariables>;
-export function updateApplicationStatus(dc: DataConnect, vars: UpdateApplicationStatusVariables): MutationPromise<UpdateApplicationStatusData, UpdateApplicationStatusVariables>;
+export function createEmployee(vars: CreateEmployeeVariables): MutationPromise<CreateEmployeeData, CreateEmployeeVariables>;
+export function createEmployee(dc: DataConnect, vars: CreateEmployeeVariables): MutationPromise<CreateEmployeeData, CreateEmployeeVariables>;
 

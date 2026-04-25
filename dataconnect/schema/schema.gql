@@ -1,8 +1,3 @@
-type Applicant @table {
-    name: String!
-    email: String!
-}
-
 type Job @table {
     title: String!
     status: String!
@@ -10,7 +5,8 @@ type Job @table {
 }
 
 type Application @table {
-    applicant: Applicant!
+    name: String!
+    email: String!
     job: Job!
     salaryProposed: Float
     status: String!
