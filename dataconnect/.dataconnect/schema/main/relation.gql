@@ -1,0 +1,515 @@
+extend type Applicant {
+  """
+  ✨ List `Application` objects in a one-to-many relationship (where `Application`.`applicant` is this object).
+  """
+  applications_on_applicant(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Application_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Application_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Application_Having
+  ): [Application!]! @fdc_generated(from: "Application.applicant", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Applicant", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Applicant` table.
+  """
+  _count: Int! @fdc_generated(from: "Applicant.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Applicant` table where the `email` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  email_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Applicant.email", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Applicant` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Applicant.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Applicant` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Applicant.name", purpose: QUERY_COUNT)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Applicant.id", purpose: ENTITY_ID)
+}
+extend type Application {
+  """
+  ✨ List `Employee` objects in a one-to-many relationship (where `Employee`.`originalApplication` is this object).
+  """
+  employees_on_originalApplication(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Employee_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Employee_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Employee_Having
+  ): [Employee!]! @fdc_generated(from: "Employee.originalApplication", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `Interview` objects in a one-to-many relationship (where `Interview`.`application` is this object).
+  """
+  interviews_on_application(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Interview_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Interview_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Interview_Having
+  ): [Interview!]! @fdc_generated(from: "Interview.application", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Application", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Application` table.
+  """
+  _count: Int! @fdc_generated(from: "Application.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Application` table where the `applicantId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  applicantId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Application.applicantId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Application` table where the `appliedDate` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  appliedDate_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Application.appliedDate", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Application` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Application.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Application` table where the `jobId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  jobId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Application.jobId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Application` table where the `salaryProposed` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  salaryProposed_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Application.salaryProposed", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Application` table where the `status` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  status_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Application.status", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `salaryProposed` field in the `Application` table.
+  """
+  salaryProposed_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Application.salaryProposed", purpose: QUERY_SUM)
+  """
+  ✨ Average the `salaryProposed` field in the `Application` table.
+  """
+  salaryProposed_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Application.salaryProposed", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `appliedDate` field in the `Application` table.
+  """
+  appliedDate_min: Date @fdc_generated(from: "Application.appliedDate", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `salaryProposed` field in the `Application` table.
+  """
+  salaryProposed_min: Float @fdc_generated(from: "Application.salaryProposed", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `appliedDate` field in the `Application` table.
+  """
+  appliedDate_max: Date @fdc_generated(from: "Application.appliedDate", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `salaryProposed` field in the `Application` table.
+  """
+  salaryProposed_max: Float @fdc_generated(from: "Application.salaryProposed", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Application.id", purpose: ENTITY_ID)
+}
+extend type Employee {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Employee", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Employee` table.
+  """
+  _count: Int! @fdc_generated(from: "Employee.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Employee` table where the `email` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  email_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Employee.email", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Employee` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Employee.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Employee` table where the `jobId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  jobId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Employee.jobId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Employee` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Employee.name", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Employee` table where the `originalApplicationId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  originalApplicationId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Employee.originalApplicationId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Employee` table where the `role` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  role_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Employee.role", purpose: QUERY_COUNT)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Employee.id", purpose: ENTITY_ID)
+}
+extend type Interview {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Interview", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Interview` table.
+  """
+  _count: Int! @fdc_generated(from: "Interview.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Interview` table where the `applicationId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  applicationId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Interview.applicationId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Interview` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Interview.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Interview` table where the `interviewEndDate` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  interviewEndDate_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Interview.interviewEndDate", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Interview` table where the `interviewModality` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  interviewModality_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Interview.interviewModality", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Interview` table where the `interviewStartDate` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  interviewStartDate_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Interview.interviewStartDate", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Interview` table where the `interviewerName` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  interviewerName_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Interview.interviewerName", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `interviewEndDate` field in the `Interview` table.
+  """
+  interviewEndDate_min: Date @fdc_generated(from: "Interview.interviewEndDate", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `interviewStartDate` field in the `Interview` table.
+  """
+  interviewStartDate_min: Date @fdc_generated(from: "Interview.interviewStartDate", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `interviewEndDate` field in the `Interview` table.
+  """
+  interviewEndDate_max: Date @fdc_generated(from: "Interview.interviewEndDate", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `interviewStartDate` field in the `Interview` table.
+  """
+  interviewStartDate_max: Date @fdc_generated(from: "Interview.interviewStartDate", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Interview.id", purpose: ENTITY_ID)
+}
+extend type Job {
+  """
+  ✨ List `Application` objects in a one-to-many relationship (where `Application`.`job` is this object).
+  """
+  applications_on_job(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Application_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Application_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Application_Having
+  ): [Application!]! @fdc_generated(from: "Application.job", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `Employee` objects in a one-to-many relationship (where `Employee`.`job` is this object).
+  """
+  employees_on_job(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Employee_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Employee_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Employee_Having
+  ): [Employee!]! @fdc_generated(from: "Employee.job", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Job", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Job` table.
+  """
+  _count: Int! @fdc_generated(from: "Job.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Job` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Job.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Job` table where the `salary` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  salary_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Job.salary", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Job` table where the `status` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  status_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Job.status", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Job` table where the `title` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  title_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Job.title", purpose: QUERY_COUNT)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Job.id", purpose: ENTITY_ID)
+}

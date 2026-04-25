@@ -39,3 +39,29 @@ query ListEmployees @auth(level: PUBLIC, insecureReason: "Local testing only") {
     role
   }
 }
+
+query ListApplications @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  applications {
+    id
+    applicantId
+    jobId
+    applicant {
+      id
+      name
+      email
+    }
+    job {
+      id
+      title
+      status
+      salary
+    }
+    salaryProposed
+    status
+    appliedDate
+  }
+}
+
+mutation UpdateApplicationStatus($id: UUID!, $status: String!) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+  application_update(id: $id, data: {status: $status})
+}

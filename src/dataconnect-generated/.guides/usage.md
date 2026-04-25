@@ -14,7 +14,7 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { listJobs, createJob, updateJobStatus, deleteJob, updateJob, listEmployees } from '@dataconnect/generated';
+import { listJobs, createJob, updateJobStatus, deleteJob, updateJob, listEmployees, listApplications, updateApplicationStatus } from '@dataconnect/generated';
 
 
 // Operation ListJobs: 
@@ -34,6 +34,12 @@ const { data } = await UpdateJob(dataConnect, updateJobVars);
 
 // Operation ListEmployees: 
 const { data } = await ListEmployees(dataConnect);
+
+// Operation ListApplications: 
+const { data } = await ListApplications(dataConnect);
+
+// Operation UpdateApplicationStatus:  For variables, look at type UpdateApplicationStatusVars in ../index.d.ts
+const { data } = await UpdateApplicationStatus(dataConnect, updateApplicationStatusVars);
 
 
 ```

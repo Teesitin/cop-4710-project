@@ -10,11 +10,13 @@ This README will guide you through the process of using the generated JavaScript
 - [**Queries**](#queries)
   - [*ListJobs*](#listjobs)
   - [*ListEmployees*](#listemployees)
+  - [*ListApplications*](#listapplications)
 - [**Mutations**](#mutations)
   - [*CreateJob*](#createjob)
   - [*UpdateJobStatus*](#updatejobstatus)
   - [*DeleteJob*](#deletejob)
   - [*UpdateJob*](#updatejob)
+  - [*UpdateApplicationStatus*](#updateapplicationstatus)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `example`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -250,6 +252,115 @@ console.log(data.employees);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.employees);
+});
+```
+
+## ListApplications
+You can execute the `ListApplications` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listApplications(options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, undefined>;
+
+interface ListApplicationsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListApplicationsData, undefined>;
+}
+export const listApplicationsRef: ListApplicationsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listApplications(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, undefined>;
+
+interface ListApplicationsRef {
+  ...
+  (dc: DataConnect): QueryRef<ListApplicationsData, undefined>;
+}
+export const listApplicationsRef: ListApplicationsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listApplicationsRef:
+```typescript
+const name = listApplicationsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListApplications` query has no variables.
+### Return Type
+Recall that executing the `ListApplications` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListApplicationsData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListApplicationsData {
+  applications: ({
+    id: UUIDString;
+    applicantId: UUIDString;
+    jobId: UUIDString;
+    applicant: {
+      id: UUIDString;
+      name: string;
+      email: string;
+    } & Applicant_Key;
+      job: {
+        id: UUIDString;
+        title: string;
+        status: string;
+        salary?: string | null;
+      } & Job_Key;
+        salaryProposed?: number | null;
+        status: string;
+        appliedDate: DateString;
+  } & Application_Key)[];
+}
+```
+### Using `ListApplications`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listApplications } from '@dataconnect/generated';
+
+
+// Call the `listApplications()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listApplications();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listApplications(dataConnect);
+
+console.log(data.applications);
+
+// Or, you can use the `Promise` API.
+listApplications().then((response) => {
+  const data = response.data;
+  console.log(data.applications);
+});
+```
+
+### Using `ListApplications`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listApplicationsRef } from '@dataconnect/generated';
+
+
+// Call the `listApplicationsRef()` function to get a reference to the query.
+const ref = listApplicationsRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listApplicationsRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.applications);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.applications);
 });
 ```
 
@@ -719,6 +830,118 @@ console.log(data.job_update);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.job_update);
+});
+```
+
+## UpdateApplicationStatus
+You can execute the `UpdateApplicationStatus` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+updateApplicationStatus(vars: UpdateApplicationStatusVariables): MutationPromise<UpdateApplicationStatusData, UpdateApplicationStatusVariables>;
+
+interface UpdateApplicationStatusRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateApplicationStatusVariables): MutationRef<UpdateApplicationStatusData, UpdateApplicationStatusVariables>;
+}
+export const updateApplicationStatusRef: UpdateApplicationStatusRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+updateApplicationStatus(dc: DataConnect, vars: UpdateApplicationStatusVariables): MutationPromise<UpdateApplicationStatusData, UpdateApplicationStatusVariables>;
+
+interface UpdateApplicationStatusRef {
+  ...
+  (dc: DataConnect, vars: UpdateApplicationStatusVariables): MutationRef<UpdateApplicationStatusData, UpdateApplicationStatusVariables>;
+}
+export const updateApplicationStatusRef: UpdateApplicationStatusRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the updateApplicationStatusRef:
+```typescript
+const name = updateApplicationStatusRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `UpdateApplicationStatus` mutation requires an argument of type `UpdateApplicationStatusVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface UpdateApplicationStatusVariables {
+  id: UUIDString;
+  status: string;
+}
+```
+### Return Type
+Recall that executing the `UpdateApplicationStatus` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `UpdateApplicationStatusData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface UpdateApplicationStatusData {
+  application_update?: Application_Key | null;
+}
+```
+### Using `UpdateApplicationStatus`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, updateApplicationStatus, UpdateApplicationStatusVariables } from '@dataconnect/generated';
+
+// The `UpdateApplicationStatus` mutation requires an argument of type `UpdateApplicationStatusVariables`:
+const updateApplicationStatusVars: UpdateApplicationStatusVariables = {
+  id: ..., 
+  status: ..., 
+};
+
+// Call the `updateApplicationStatus()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await updateApplicationStatus(updateApplicationStatusVars);
+// Variables can be defined inline as well.
+const { data } = await updateApplicationStatus({ id: ..., status: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await updateApplicationStatus(dataConnect, updateApplicationStatusVars);
+
+console.log(data.application_update);
+
+// Or, you can use the `Promise` API.
+updateApplicationStatus(updateApplicationStatusVars).then((response) => {
+  const data = response.data;
+  console.log(data.application_update);
+});
+```
+
+### Using `UpdateApplicationStatus`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, updateApplicationStatusRef, UpdateApplicationStatusVariables } from '@dataconnect/generated';
+
+// The `UpdateApplicationStatus` mutation requires an argument of type `UpdateApplicationStatusVariables`:
+const updateApplicationStatusVars: UpdateApplicationStatusVariables = {
+  id: ..., 
+  status: ..., 
+};
+
+// Call the `updateApplicationStatusRef()` function to get a reference to the mutation.
+const ref = updateApplicationStatusRef(updateApplicationStatusVars);
+// Variables can be defined inline as well.
+const ref = updateApplicationStatusRef({ id: ..., status: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = updateApplicationStatusRef(dataConnect, updateApplicationStatusVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.application_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.application_update);
 });
 ```
 

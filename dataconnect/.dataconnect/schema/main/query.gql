@@ -1,0 +1,267 @@
+extend type Query {
+  """
+  ✨ Look up a single `Applicant` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  applicant(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Applicant_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Applicant_FirstRow
+  ): Applicant @fdc_generated(from: "Applicant", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Application` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  application(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Application_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Application_FirstRow
+  ): Application @fdc_generated(from: "Application", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Employee` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  employee(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Employee_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Employee_FirstRow
+  ): Employee @fdc_generated(from: "Employee", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Interview` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  interview(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Interview_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Interview_FirstRow
+  ): Interview @fdc_generated(from: "Interview", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Job` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  job(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Job_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Job_FirstRow
+  ): Job @fdc_generated(from: "Job", purpose: QUERY_SINGLE)
+  """
+  ✨ List `Applicant` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  applicants(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Applicant_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Applicant_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Applicant_Having
+  ): [Applicant!]! @fdc_generated(from: "Applicant", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Application` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  applications(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Application_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Application_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Application_Having
+  ): [Application!]! @fdc_generated(from: "Application", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Employee` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  employees(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Employee_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Employee_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Employee_Having
+  ): [Employee!]! @fdc_generated(from: "Employee", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Interview` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  interviews(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Interview_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Interview_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Interview_Having
+  ): [Interview!]! @fdc_generated(from: "Interview", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Job` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  jobs(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Job_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Job_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Job_Having
+  ): [Job!]! @fdc_generated(from: "Job", purpose: QUERY_MULTIPLE)
+}

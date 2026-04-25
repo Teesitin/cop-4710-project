@@ -24,3 +24,11 @@ type Employee @table {
     job: Job!
     originalApplication: Application!
 }
+
+type Interview @table {
+    application: Application!
+    interviewerName: String
+    interviewStartDate: Date
+    interviewEndDate: Date
+    interviewModality: String
+}
