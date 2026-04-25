@@ -1,4 +1,4 @@
-const { queryRef, executeQuery, validateArgsWithOptions, mutationRef, executeMutation, validateArgs, makeMemoryCacheProvider } = require('firebase/data-connect');
+const { queryRef, executeQuery, mutationRef, executeMutation, validateArgs } = require('firebase/data-connect');
 
 const connectorConfig = {
   connector: 'example',
@@ -6,12 +6,6 @@ const connectorConfig = {
   location: 'us-east4'
 };
 exports.connectorConfig = connectorConfig;
-const dataConnectSettings = {
-  cacheSettings: {
-    cacheProvider: makeMemoryCacheProvider()
-  }
-};
-exports.dataConnectSettings = dataConnectSettings;
 
 const listJobsRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
@@ -21,12 +15,9 @@ const listJobsRef = (dc) => {
 listJobsRef.operationName = 'ListJobs';
 exports.listJobsRef = listJobsRef;
 
-exports.listJobs = function listJobs(dcOrOptions, options) {
-  
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
-  return executeQuery(listJobsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
-}
-;
+exports.listJobs = function listJobs(dc) {
+  return executeQuery(listJobsRef(dc));
+};
 
 const createJobRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -37,10 +28,8 @@ createJobRef.operationName = 'CreateJob';
 exports.createJobRef = createJobRef;
 
 exports.createJob = function createJob(dcOrVars, vars) {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
-  return executeMutation(createJobRef(dcInstance, inputVars));
-}
-;
+  return executeMutation(createJobRef(dcOrVars, vars));
+};
 
 const updateJobStatusRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -51,10 +40,8 @@ updateJobStatusRef.operationName = 'UpdateJobStatus';
 exports.updateJobStatusRef = updateJobStatusRef;
 
 exports.updateJobStatus = function updateJobStatus(dcOrVars, vars) {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
-  return executeMutation(updateJobStatusRef(dcInstance, inputVars));
-}
-;
+  return executeMutation(updateJobStatusRef(dcOrVars, vars));
+};
 
 const deleteJobRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -65,10 +52,8 @@ deleteJobRef.operationName = 'DeleteJob';
 exports.deleteJobRef = deleteJobRef;
 
 exports.deleteJob = function deleteJob(dcOrVars, vars) {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
-  return executeMutation(deleteJobRef(dcInstance, inputVars));
-}
-;
+  return executeMutation(deleteJobRef(dcOrVars, vars));
+};
 
 const updateJobRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -79,10 +64,8 @@ updateJobRef.operationName = 'UpdateJob';
 exports.updateJobRef = updateJobRef;
 
 exports.updateJob = function updateJob(dcOrVars, vars) {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
-  return executeMutation(updateJobRef(dcInstance, inputVars));
-}
-;
+  return executeMutation(updateJobRef(dcOrVars, vars));
+};
 
 const listEmployeesRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
@@ -92,12 +75,9 @@ const listEmployeesRef = (dc) => {
 listEmployeesRef.operationName = 'ListEmployees';
 exports.listEmployeesRef = listEmployeesRef;
 
-exports.listEmployees = function listEmployees(dcOrOptions, options) {
-  
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
-  return executeQuery(listEmployeesRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
-}
-;
+exports.listEmployees = function listEmployees(dc) {
+  return executeQuery(listEmployeesRef(dc));
+};
 
 const listApplicationsRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
@@ -107,12 +87,9 @@ const listApplicationsRef = (dc) => {
 listApplicationsRef.operationName = 'ListApplications';
 exports.listApplicationsRef = listApplicationsRef;
 
-exports.listApplications = function listApplications(dcOrOptions, options) {
-  
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
-  return executeQuery(listApplicationsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
-}
-;
+exports.listApplications = function listApplications(dc) {
+  return executeQuery(listApplicationsRef(dc));
+};
 
 const updateApplicationStatusRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -123,7 +100,53 @@ updateApplicationStatusRef.operationName = 'UpdateApplicationStatus';
 exports.updateApplicationStatusRef = updateApplicationStatusRef;
 
 exports.updateApplicationStatus = function updateApplicationStatus(dcOrVars, vars) {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
-  return executeMutation(updateApplicationStatusRef(dcInstance, inputVars));
+  return executeMutation(updateApplicationStatusRef(dcOrVars, vars));
+};
+
+const listInterviewsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListInterviews');
 }
-;
+listInterviewsRef.operationName = 'ListInterviews';
+exports.listInterviewsRef = listInterviewsRef;
+
+exports.listInterviews = function listInterviews(dc) {
+  return executeQuery(listInterviewsRef(dc));
+};
+
+const createInterviewRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateInterview', inputVars);
+}
+createInterviewRef.operationName = 'CreateInterview';
+exports.createInterviewRef = createInterviewRef;
+
+exports.createInterview = function createInterview(dcOrVars, vars) {
+  return executeMutation(createInterviewRef(dcOrVars, vars));
+};
+
+const deleteInterviewRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'DeleteInterview', inputVars);
+}
+deleteInterviewRef.operationName = 'DeleteInterview';
+exports.deleteInterviewRef = deleteInterviewRef;
+
+exports.deleteInterview = function deleteInterview(dcOrVars, vars) {
+  return executeMutation(deleteInterviewRef(dcOrVars, vars));
+};
+
+const updateInterviewRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateInterview', inputVars);
+}
+updateInterviewRef.operationName = 'UpdateInterview';
+exports.updateInterviewRef = updateInterviewRef;
+
+exports.updateInterview = function updateInterview(dcOrVars, vars) {
+  return executeMutation(updateInterviewRef(dcOrVars, vars));
+};

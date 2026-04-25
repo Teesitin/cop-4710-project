@@ -1,7 +1,6 @@
-import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, ExecuteQueryOptions, MutationRef, MutationPromise, DataConnectSettings } from 'firebase/data-connect';
+import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise } from 'firebase/data-connect';
 
 export const connectorConfig: ConnectorConfig;
-export const dataConnectSettings: DataConnectSettings;
 
 export type TimestampString = string;
 export type UUIDString = string;
@@ -21,6 +20,18 @@ export interface Application_Key {
   __typename?: 'Application_Key';
 }
 
+export interface CreateInterviewData {
+  interview_insert: Interview_Key;
+}
+
+export interface CreateInterviewVariables {
+  applicationId: UUIDString;
+  interviewerName?: string | null;
+  interviewStartDate?: DateString | null;
+  interviewEndDate?: DateString | null;
+  interviewModality?: string | null;
+}
+
 export interface CreateJobData {
   job_insert: Job_Key;
 }
@@ -29,6 +40,14 @@ export interface CreateJobVariables {
   title: string;
   status: string;
   salary?: string | null;
+}
+
+export interface DeleteInterviewData {
+  interview_delete?: Interview_Key | null;
+}
+
+export interface DeleteInterviewVariables {
+  id: UUIDString;
 }
 
 export interface DeleteJobData {
@@ -85,6 +104,25 @@ export interface ListEmployeesData {
   } & Employee_Key)[];
 }
 
+export interface ListInterviewsData {
+  interviews: ({
+    id: UUIDString;
+    application: {
+      id: UUIDString;
+      applicant: {
+        name: string;
+      };
+        job: {
+          title: string;
+        };
+    } & Application_Key;
+      interviewerName?: string | null;
+      interviewStartDate?: DateString | null;
+      interviewEndDate?: DateString | null;
+      interviewModality?: string | null;
+  } & Interview_Key)[];
+}
+
 export interface ListJobsData {
   jobs: ({
     id: UUIDString;
@@ -101,6 +139,18 @@ export interface UpdateApplicationStatusData {
 export interface UpdateApplicationStatusVariables {
   id: UUIDString;
   status: string;
+}
+
+export interface UpdateInterviewData {
+  interview_update?: Interview_Key | null;
+}
+
+export interface UpdateInterviewVariables {
+  id: UUIDString;
+  interviewerName?: string | null;
+  interviewStartDate?: DateString | null;
+  interviewEndDate?: DateString | null;
+  interviewModality?: string | null;
 }
 
 export interface UpdateJobData {
@@ -132,8 +182,8 @@ interface ListJobsRef {
 }
 export const listJobsRef: ListJobsRef;
 
-export function listJobs(options?: ExecuteQueryOptions): QueryPromise<ListJobsData, undefined>;
-export function listJobs(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListJobsData, undefined>;
+export function listJobs(): QueryPromise<ListJobsData, undefined>;
+export function listJobs(dc: DataConnect): QueryPromise<ListJobsData, undefined>;
 
 interface CreateJobRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -192,8 +242,8 @@ interface ListEmployeesRef {
 }
 export const listEmployeesRef: ListEmployeesRef;
 
-export function listEmployees(options?: ExecuteQueryOptions): QueryPromise<ListEmployeesData, undefined>;
-export function listEmployees(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListEmployeesData, undefined>;
+export function listEmployees(): QueryPromise<ListEmployeesData, undefined>;
+export function listEmployees(dc: DataConnect): QueryPromise<ListEmployeesData, undefined>;
 
 interface ListApplicationsRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -204,8 +254,8 @@ interface ListApplicationsRef {
 }
 export const listApplicationsRef: ListApplicationsRef;
 
-export function listApplications(options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, undefined>;
-export function listApplications(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, undefined>;
+export function listApplications(): QueryPromise<ListApplicationsData, undefined>;
+export function listApplications(dc: DataConnect): QueryPromise<ListApplicationsData, undefined>;
 
 interface UpdateApplicationStatusRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -218,4 +268,52 @@ export const updateApplicationStatusRef: UpdateApplicationStatusRef;
 
 export function updateApplicationStatus(vars: UpdateApplicationStatusVariables): MutationPromise<UpdateApplicationStatusData, UpdateApplicationStatusVariables>;
 export function updateApplicationStatus(dc: DataConnect, vars: UpdateApplicationStatusVariables): MutationPromise<UpdateApplicationStatusData, UpdateApplicationStatusVariables>;
+
+interface ListInterviewsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListInterviewsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListInterviewsData, undefined>;
+  operationName: string;
+}
+export const listInterviewsRef: ListInterviewsRef;
+
+export function listInterviews(): QueryPromise<ListInterviewsData, undefined>;
+export function listInterviews(dc: DataConnect): QueryPromise<ListInterviewsData, undefined>;
+
+interface CreateInterviewRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateInterviewVariables): MutationRef<CreateInterviewData, CreateInterviewVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateInterviewVariables): MutationRef<CreateInterviewData, CreateInterviewVariables>;
+  operationName: string;
+}
+export const createInterviewRef: CreateInterviewRef;
+
+export function createInterview(vars: CreateInterviewVariables): MutationPromise<CreateInterviewData, CreateInterviewVariables>;
+export function createInterview(dc: DataConnect, vars: CreateInterviewVariables): MutationPromise<CreateInterviewData, CreateInterviewVariables>;
+
+interface DeleteInterviewRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteInterviewVariables): MutationRef<DeleteInterviewData, DeleteInterviewVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: DeleteInterviewVariables): MutationRef<DeleteInterviewData, DeleteInterviewVariables>;
+  operationName: string;
+}
+export const deleteInterviewRef: DeleteInterviewRef;
+
+export function deleteInterview(vars: DeleteInterviewVariables): MutationPromise<DeleteInterviewData, DeleteInterviewVariables>;
+export function deleteInterview(dc: DataConnect, vars: DeleteInterviewVariables): MutationPromise<DeleteInterviewData, DeleteInterviewVariables>;
+
+interface UpdateInterviewRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateInterviewVariables): MutationRef<UpdateInterviewData, UpdateInterviewVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateInterviewVariables): MutationRef<UpdateInterviewData, UpdateInterviewVariables>;
+  operationName: string;
+}
+export const updateInterviewRef: UpdateInterviewRef;
+
+export function updateInterview(vars: UpdateInterviewVariables): MutationPromise<UpdateInterviewData, UpdateInterviewVariables>;
+export function updateInterview(dc: DataConnect, vars: UpdateInterviewVariables): MutationPromise<UpdateInterviewData, UpdateInterviewVariables>;
 
