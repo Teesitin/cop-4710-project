@@ -1,12 +1,12 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { executeMutation, executeQuery } from 'firebase/data-connect';
+    import '$lib/firebase';
 
     import {
-        createEmployeeRef,
-        listApplicationsRef,
-        listEmployeesRef,
-        listJobsRef
+        createEmployee,
+        listApplications,
+        listEmployees,
+        listJobs
     } from '../../../dataconnect-generated';
 
     let { close, success } = $props<{
@@ -23,13 +23,9 @@
 
     type ApplicationRow = {
         id: string;
-        applicantId: string;
+        name: string;
+        email: string;
         jobId: string;
-        applicant: {
-            id: string;
-            name: string;
-            email: string;
-        };
         job: JobRow;
         salaryProposed?: number | null;
         status: string;
@@ -57,23 +53,23 @@
     let formError = $state('');
 
     let openJobs = $derived.by(() => {
-        return jobs.filter((job) => job.status.toLowerCase() === 'open');
+        return jobs.filter((job) =>
+            String(job.status ?? '').trim().toLowerCase() === 'open'
+        );
     });
 
     let availableApplications = $derived.by(() => {
         const employeeApplicationIds = new Set(
-            employees
-                .map((employee) => employee.originalApplicationId)
-                .filter(Boolean)
+            employees.map((e) => e.originalApplicationId).filter(Boolean)
         );
 
-        const openJobIds = new Set(openJobs.map((job) => job.id));
+        const openJobIds = new Set(openJobs.map((j) => j.id));
 
-        return applications.filter((application) => {
-            const alreadyEmployee = employeeApplicationIds.has(application.id);
-            const applicationJobIsOpen = openJobIds.has(application.jobId);
-
-            return !alreadyEmployee && applicationJobIsOpen;
+        return applications.filter((app) => {
+            return (
+                !employeeApplicationIds.has(app.id) &&
+                openJobIds.has(app.jobId)
+            );
         });
     });
 
@@ -82,50 +78,46 @@
     });
 
     let selectedApplication = $derived.by(() => {
-        return availableApplications.find((application) => application.id === selectedApplicationId);
+        return availableApplications.find((app) => app.id === selectedApplicationId);
     });
 
     $effect(() => {
-        if (!loading && openJobs.length > 0 && !openJobs.some((job) => job.id === selectedJobId)) {
+        if (!loading && openJobs.length > 0 && !openJobs.some(j => j.id === selectedJobId)) {
             selectedJobId = openJobs[0].id;
         }
-
         if (!loading && openJobs.length === 0) {
             selectedJobId = '';
         }
     });
 
     $effect(() => {
-        if (!loading && availableApplications.length > 0 && !availableApplications.some((application) => application.id === selectedApplicationId)) {
+        if (!loading && availableApplications.length > 0 && !availableApplications.some(a => a.id === selectedApplicationId)) {
             selectedApplicationId = availableApplications[0].id;
         }
-
         if (!loading && availableApplications.length === 0) {
             selectedApplicationId = '';
         }
     });
 
-    onMount(() => {
-        loadFormData();
-    });
+    onMount(loadFormData);
 
     async function loadFormData() {
         try {
             loading = true;
             formError = '';
 
-            const [jobsResult, applicationsResult, employeesResult] = await Promise.all([
-                executeQuery(listJobsRef()),
-                executeQuery(listApplicationsRef()),
-                executeQuery(listEmployeesRef())
+            const [jobsRes, appsRes, empRes] = await Promise.all([
+                listJobs(),
+                listApplications(),
+                listEmployees()
             ]);
 
-            jobs = jobsResult.data.jobs ?? [];
-            applications = applicationsResult.data.applications ?? [];
-            employees = employeesResult.data.employees ?? [];
+            jobs = jobsRes.data.jobs ?? [];
+            applications = appsRes.data.applications ?? [];
+            employees = empRes.data.employees ?? [];
         } catch (err) {
             console.error('loadFormData error:', err);
-            formError = 'Failed to load jobs, applications, and employees.';
+            formError = 'Failed to load data.';
         } finally {
             loading = false;
         }
@@ -135,34 +127,32 @@
         formError = '';
 
         if (!selectedApplication) {
-            formError = 'Please select an available application.';
+            formError = 'Please select an application.';
             return;
         }
 
         if (!selectedJob) {
-            formError = 'Please select an open job.';
+            formError = 'Please select a job.';
             return;
         }
 
         try {
             saving = true;
 
-            const nameValue = selectedApplication.applicant.name;
-            const emailValue = selectedApplication.applicant.email;
+            const nameValue = selectedApplication.name;
+            const emailValue = selectedApplication.email;
             const roleValue = selectedJob.title;
 
-            const createEmployeeResult = await executeMutation(
-                createEmployeeRef({
-                    name: nameValue,
-                    email: emailValue,
-                    role: roleValue,
-                    jobId: selectedJob.id,
-                    originalApplicationId: selectedApplication.id
-                })
-            );
+            await createEmployee({
+                name: nameValue,
+                email: emailValue,
+                role: roleValue,
+                jobId: selectedJob.id,
+                originalApplicationId: selectedApplication.id
+            });
 
             success({
-                id: createEmployeeResult.data.employee_insert.id,
+                id: crypto.randomUUID(),
                 name: nameValue,
                 email: emailValue,
                 role: roleValue,
@@ -179,7 +169,6 @@
         }
     }
 </script>
-
 <h2 class="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
     Add New Employee
 </h2>
@@ -202,7 +191,7 @@
             >
                 {#each availableApplications as application}
                     <option value={application.id}>
-                        {application.applicant.name} — {application.applicant.email}
+                        {application.name} — {application.email}
                     </option>
                 {/each}
             </select>
@@ -215,11 +204,11 @@
                 </p>
 
                 <p class="mt-1 text-gray-600 dark:text-gray-300">
-                    Name: {selectedApplication.applicant.name}
+                    Name: {selectedApplication.name}
                 </p>
 
                 <p class="text-gray-600 dark:text-gray-300">
-                    Email: {selectedApplication.applicant.email}
+                    Email: {selectedApplication.email}
                 </p>
 
                 <p class="text-gray-600 dark:text-gray-300">

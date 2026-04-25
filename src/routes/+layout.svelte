@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import '../app.css';
     import Sidebar from '$lib/assets/menu/Sidebar.svelte';
+    import Notify from '$lib/assets/components/Notify.svelte';
 
     let { children } = $props();
 
@@ -25,3 +26,5 @@
 		{@render children()}
 	</div>
 </div>
+
+<Notify/>
