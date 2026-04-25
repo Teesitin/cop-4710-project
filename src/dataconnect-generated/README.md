@@ -115,7 +115,7 @@ export interface ListJobsData {
     id: UUIDString;
     title: string;
     status: string;
-    salary?: string | null;
+    salary?: number | null;
   } & Job_Key)[];
 }
 ```
@@ -216,7 +216,7 @@ export interface ListApplicationsData {
       id: UUIDString;
       title: string;
       status: string;
-      salary?: string | null;
+      salary?: number | null;
     } & Job_Key;
       salaryProposed?: number | null;
       status: string;
@@ -327,7 +327,7 @@ export interface GetApplicationData {
       id: UUIDString;
       title: string;
       status: string;
-      salary?: string | null;
+      salary?: number | null;
     } & Job_Key;
       salaryProposed?: number | null;
       status: string;
@@ -446,7 +446,7 @@ export interface ListEmployeesData {
       id: UUIDString;
       title: string;
       status: string;
-      salary?: string | null;
+      salary?: number | null;
     } & Job_Key;
       originalApplication: {
         id: UUIDString;
@@ -666,7 +666,7 @@ The `CreateJob` mutation requires an argument of type `CreateJobVariables`, whic
 export interface CreateJobVariables {
   title: string;
   status: string;
-  salary?: string | null;
+  salary?: number | null;
 }
 ```
 ### Return Type
@@ -782,7 +782,7 @@ export interface UpdateJobVariables {
   id: UUIDString;
   title: string;
   status: string;
-  salary?: string | null;
+  salary?: number | null;
 }
 ```
 ### Return Type

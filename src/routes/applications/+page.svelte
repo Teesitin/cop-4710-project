@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { afterNavigate } from '$app/navigation';
     import '$lib/firebase';
 
     import {
@@ -17,7 +17,7 @@
         id: string;
         title: string;
         status: string;
-        salary?: string | null;
+        salary?: number | null;
     };
 
     type ApplicationRow = {
@@ -47,7 +47,7 @@
 
     const statuses = ['Pending', 'Accepted', 'Denied'];
 
-    onMount(() => {
+    afterNavigate(() => {
         loadPageData();
     });
 
@@ -98,9 +98,7 @@
         editName = app.name;
         editEmail = app.email;
         editJobId = app.jobId || app.job?.id || '';
-        editSalaryProposed = app.salaryProposed === null || app.salaryProposed === undefined
-            ? ''
-            : String(app.salaryProposed);
+        editSalaryProposed = app.salaryProposed ?? '';
         editStatus = app.status;
         editAppliedDate = app.appliedDate;
 
@@ -155,20 +153,21 @@
             });
 
             const selectedJob = jobs.find((job) => job.id === editJobId);
-            const index = applications.findIndex((app) => app.id === applicationId);
 
-            if (index !== -1) {
-                applications[index] = {
-                    ...applications[index],
+            applications = applications.map((app) => {
+                if (app.id !== applicationId) return app;
+
+                return {
+                    ...app,
                     name: nameValue,
                     email: emailValue,
                     jobId: editJobId,
-                    job: selectedJob ?? applications[index].job,
+                    job: selectedJob ?? app.job,
                     salaryProposed: salaryValue,
                     status: editStatus,
                     appliedDate: editAppliedDate
                 };
-            }
+            });
 
             editingId = null;
             notify.success('Application updated.');
@@ -223,19 +222,15 @@
 </svelte:head>
 
 <section class="mx-auto max-w-6xl p-10 space-y-10">
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Applications
-        </h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            View and manage all applications
-        </p>
-    </div>
-
     <div class="flex items-center justify-between">
-        <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
-            Applications Database
-        </h2>
+        <div class="">
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+                Applications
+            </h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                View and manage all applications
+            </p>
+        </div>
 
         <button
             onclick={() => showAddModal = true}
@@ -251,7 +246,6 @@
                 Loading applications...
             </p>
         </div>
-
     {:else if error}
         <div class="rounded-2xl border border-red-200 bg-red-50 p-6 shadow-sm">
             <p class="text-sm font-medium text-red-700">{error}</p>
@@ -263,11 +257,10 @@
                 No applications found.
             </p>
         </div>
-
     {:else}
         <div class="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-                <thead class="bg-gray-50 dark:bg-gray-800">
+                <thead class="bg-gray-50 dark:bg-gray-900">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-300">
                             Name
@@ -293,7 +286,7 @@
                     </tr>
                 </thead>
 
-                <tbody class="divide-y divide-gray-200 dark:divide-gray-600 bg-white dark:bg-gray-700">
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-600 bg-white dark:bg-gray-800">
                     {#each applications as app (app.id)}
                         <tr class="transition hover:bg-gray-50 dark:hover:bg-gray-600">
                             {#if editingId === app.id}

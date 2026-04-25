@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { afterNavigate } from '$app/navigation';
     import '$lib/firebase';
 
     import {
@@ -28,7 +28,7 @@
     let editEmail = $state('');
     let editRole = $state('');
 
-    onMount(() => {
+    afterNavigate(() => {
         loadEmployees();
     });
 
@@ -149,19 +149,15 @@
 </svelte:head>
 
 <section class="mx-auto max-w-6xl p-10 space-y-10">
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Employees
-        </h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            View and manage all employees
-        </p>
-    </div>
-
     <div class="flex items-center justify-between">
-        <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
-            Employees Database
-        </h2>
+        <div class="">
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+                Employees
+            </h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                View and manage all employees
+            </p>
+        </div>
 
         <button
             onclick={openAddModal}
@@ -191,9 +187,9 @@
         </div>
 
     {:else}
-        <div class="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm">
+        <div class="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-700 shadow-sm">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-                <thead class="bg-gray-50 dark:bg-gray-800">
+                <thead class="bg-gray-50 dark:bg-gray-900">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-300">
                             Name
@@ -210,7 +206,7 @@
                     </tr>
                 </thead>
 
-                <tbody class="divide-y divide-gray-200 dark:divide-gray-600 bg-white dark:bg-gray-700">
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-600 bg-white dark:bg-gray-800">
                     {#each employees as emp (emp.id)}
                         <tr class="transition hover:bg-gray-50 dark:hover:bg-gray-600">
                             {#if editingId === emp.id}

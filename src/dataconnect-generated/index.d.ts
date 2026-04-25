@@ -60,7 +60,7 @@ export interface CreateJobData {
 export interface CreateJobVariables {
   title: string;
   status: string;
-  salary?: string | null;
+  salary?: number | null;
 }
 
 export interface DeleteApplicationData {
@@ -110,7 +110,7 @@ export interface GetApplicationData {
       id: UUIDString;
       title: string;
       status: string;
-      salary?: string | null;
+      salary?: number | null;
     } & Job_Key;
       salaryProposed?: number | null;
       status: string;
@@ -142,7 +142,7 @@ export interface ListApplicationsData {
       id: UUIDString;
       title: string;
       status: string;
-      salary?: string | null;
+      salary?: number | null;
     } & Job_Key;
       salaryProposed?: number | null;
       status: string;
@@ -162,7 +162,7 @@ export interface ListEmployeesData {
       id: UUIDString;
       title: string;
       status: string;
-      salary?: string | null;
+      salary?: number | null;
     } & Job_Key;
       originalApplication: {
         id: UUIDString;
@@ -198,7 +198,7 @@ export interface ListJobsData {
     id: UUIDString;
     title: string;
     status: string;
-    salary?: string | null;
+    salary?: number | null;
   } & Job_Key)[];
 }
 
@@ -265,7 +265,7 @@ export interface UpdateJobVariables {
   id: UUIDString;
   title: string;
   status: string;
-  salary?: string | null;
+  salary?: number | null;
 }
 
 interface ListJobsRef {

@@ -5,12 +5,12 @@
     import { getDataConnect } from 'firebase/data-connect';
     import { app } from '../../../lib/firebase';
 
-        let { onClose, onSuccess } = $props<{
+    let { onClose, onSuccess } = $props<{
         onClose: () => void;
         onSuccess: (interview: any) => void;
     }>();
 
-        type ApplicationOption = {
+    type ApplicationOption = {
         id: string;
         applicantName: string;
         jobTitle: string;
