@@ -9,25 +9,24 @@
 
     let { close, success } = $props<{
         close: () => void;
-        success: (application: any) => void;
+        success: () => void;
     }>();
 
-    type JobRow = {
-        id: string;
-        title: string;
-        status: string;
-        salary?: string | null;
-    };
-
-    let jobs = $state<JobRow[]>([]);
+    let jobs = $state<Job[]>([]);
 
     let name = $state('');
     let email = $state('');
     let selectedJobId = $state('');
     let salaryProposed = $state('');
     let status = $state('Pending');
-    let appliedDate = $state(new Date().toISOString().slice(0, 10));
 
+    // Timestamp input value for <input type="datetime-local">
+    let appliedDate = $state(
+        new Date(Date.now() - new Date().getTimezoneOffset() * 60_000)
+            .toISOString()
+            .slice(0, 16)
+    );
+    
     let loading = $state(true);
     let saving = $state(false);
     let formError = $state('');
@@ -61,12 +60,19 @@
         loadJobs();
     });
 
+    function toIsoTimestamp(value: string) {
+        return value ? new Date(value).toISOString() : '';
+    }
+
     async function loadJobs() {
         try {
             loading = true;
             formError = '';
 
-            const result = await listJobs();
+            const result = await listJobs({
+                refresh: Date.now()
+            });
+
             jobs = result.data.jobs ?? [];
         } catch (err) {
             console.error('loadJobs error:', err);
@@ -104,6 +110,13 @@
             return;
         }
 
+        const appliedDateTimestamp = toIsoTimestamp(appliedDateValue);
+
+        if (!appliedDateTimestamp) {
+            formError = 'Applied date must be valid.';
+            return;
+        }
+
         const salaryValue = salaryText ? Number(salaryText) : null;
 
         if (salaryText && Number.isNaN(salaryValue)) {
@@ -120,19 +133,10 @@
                 jobId: selectedJob.id,
                 salaryProposed: salaryValue,
                 status,
-                appliedDate: appliedDateValue
+                appliedDate: appliedDateTimestamp
             });
 
-            success({
-                id: crypto.randomUUID(),
-                name: nameValue,
-                email: emailValue,
-                jobId: selectedJob.id,
-                job: selectedJob,
-                salaryProposed: salaryValue,
-                status,
-                appliedDate: appliedDateValue
-            });
+            success();
         } catch (err) {
             console.error('handleSubmit error:', err);
             formError = 'Failed to create application.';
@@ -234,7 +238,7 @@
             </label>
             <input
                 id="appliedDate"
-                type="date"
+                type="datetime-local"
                 bind:value={appliedDate}
                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2.5 text-sm text-gray-900 dark:text-white outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />

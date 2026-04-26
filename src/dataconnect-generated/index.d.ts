@@ -26,7 +26,7 @@ export interface CreateApplicationVariables {
   jobId: UUIDString;
   salaryProposed?: number | null;
   status: string;
-  appliedDate: DateString;
+  appliedDate: TimestampString;
 }
 
 export interface CreateEmployeeData {
@@ -114,12 +114,13 @@ export interface GetApplicationData {
     } & Job_Key;
       salaryProposed?: number | null;
       status: string;
-      appliedDate: DateString;
+      appliedDate: TimestampString;
   } & Application_Key;
 }
 
 export interface GetApplicationVariables {
   id: UUIDString;
+  refresh?: number | null;
 }
 
 export interface Interview_Key {
@@ -146,8 +147,12 @@ export interface ListApplicationsData {
     } & Job_Key;
       salaryProposed?: number | null;
       status: string;
-      appliedDate: DateString;
+      appliedDate: TimestampString;
   } & Application_Key)[];
+}
+
+export interface ListApplicationsVariables {
+  refresh?: number | null;
 }
 
 export interface ListEmployeesData {
@@ -168,12 +173,22 @@ export interface ListEmployeesData {
         id: UUIDString;
         name: string;
         email: string;
-        status: string;
-        salaryProposed?: number | null;
-        appliedDate: DateString;
         jobId: UUIDString;
+        job: {
+          id: UUIDString;
+          title: string;
+          status: string;
+          salary?: number | null;
+        } & Job_Key;
+          salaryProposed?: number | null;
+          status: string;
+          appliedDate: TimestampString;
       } & Application_Key;
   } & Employee_Key)[];
+}
+
+export interface ListEmployeesVariables {
+  refresh?: number | null;
 }
 
 export interface ListInterviewsData {
@@ -182,15 +197,27 @@ export interface ListInterviewsData {
     application: {
       id: UUIDString;
       name: string;
+      email: string;
+      jobId: UUIDString;
       job: {
+        id: UUIDString;
         title: string;
-      };
+        status: string;
+        salary?: number | null;
+      } & Job_Key;
+        salaryProposed?: number | null;
+        status: string;
+        appliedDate: TimestampString;
     } & Application_Key;
       interviewerName?: string | null;
       interviewStartDate?: TimestampString | null;
       interviewEndDate?: TimestampString | null;
       interviewModality?: string | null;
   } & Interview_Key)[];
+}
+
+export interface ListInterviewsVariables {
+  refresh?: number | null;
 }
 
 export interface ListJobsData {
@@ -200,6 +227,10 @@ export interface ListJobsData {
     status: string;
     salary?: number | null;
   } & Job_Key)[];
+}
+
+export interface ListJobsVariables {
+  refresh?: number | null;
 }
 
 export interface UpdateApplicationData {
@@ -222,7 +253,7 @@ export interface UpdateApplicationVariables {
   jobId: UUIDString;
   salaryProposed?: number | null;
   status: string;
-  appliedDate: DateString;
+  appliedDate: TimestampString;
 }
 
 export interface UpdateEmployeeData {
@@ -270,15 +301,15 @@ export interface UpdateJobVariables {
 
 interface ListJobsRef {
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListJobsData, undefined>;
+  (vars?: ListJobsVariables): QueryRef<ListJobsData, ListJobsVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListJobsData, undefined>;
+  (dc: DataConnect, vars?: ListJobsVariables): QueryRef<ListJobsData, ListJobsVariables>;
   operationName: string;
 }
 export const listJobsRef: ListJobsRef;
 
-export function listJobs(options?: ExecuteQueryOptions): QueryPromise<ListJobsData, undefined>;
-export function listJobs(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListJobsData, undefined>;
+export function listJobs(vars?: ListJobsVariables, options?: ExecuteQueryOptions): QueryPromise<ListJobsData, ListJobsVariables>;
+export function listJobs(dc: DataConnect, vars?: ListJobsVariables, options?: ExecuteQueryOptions): QueryPromise<ListJobsData, ListJobsVariables>;
 
 interface CreateJobRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -330,15 +361,15 @@ export function deleteJob(dc: DataConnect, vars: DeleteJobVariables): MutationPr
 
 interface ListApplicationsRef {
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListApplicationsData, undefined>;
+  (vars?: ListApplicationsVariables): QueryRef<ListApplicationsData, ListApplicationsVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListApplicationsData, undefined>;
+  (dc: DataConnect, vars?: ListApplicationsVariables): QueryRef<ListApplicationsData, ListApplicationsVariables>;
   operationName: string;
 }
 export const listApplicationsRef: ListApplicationsRef;
 
-export function listApplications(options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, undefined>;
-export function listApplications(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, undefined>;
+export function listApplications(vars?: ListApplicationsVariables, options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, ListApplicationsVariables>;
+export function listApplications(dc: DataConnect, vars?: ListApplicationsVariables, options?: ExecuteQueryOptions): QueryPromise<ListApplicationsData, ListApplicationsVariables>;
 
 interface GetApplicationRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -402,15 +433,15 @@ export function deleteApplication(dc: DataConnect, vars: DeleteApplicationVariab
 
 interface ListEmployeesRef {
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListEmployeesData, undefined>;
+  (vars?: ListEmployeesVariables): QueryRef<ListEmployeesData, ListEmployeesVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListEmployeesData, undefined>;
+  (dc: DataConnect, vars?: ListEmployeesVariables): QueryRef<ListEmployeesData, ListEmployeesVariables>;
   operationName: string;
 }
 export const listEmployeesRef: ListEmployeesRef;
 
-export function listEmployees(options?: ExecuteQueryOptions): QueryPromise<ListEmployeesData, undefined>;
-export function listEmployees(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListEmployeesData, undefined>;
+export function listEmployees(vars?: ListEmployeesVariables, options?: ExecuteQueryOptions): QueryPromise<ListEmployeesData, ListEmployeesVariables>;
+export function listEmployees(dc: DataConnect, vars?: ListEmployeesVariables, options?: ExecuteQueryOptions): QueryPromise<ListEmployeesData, ListEmployeesVariables>;
 
 interface CreateEmployeeRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -450,15 +481,15 @@ export function deleteEmployee(dc: DataConnect, vars: DeleteEmployeeVariables): 
 
 interface ListInterviewsRef {
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListInterviewsData, undefined>;
+  (vars?: ListInterviewsVariables): QueryRef<ListInterviewsData, ListInterviewsVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListInterviewsData, undefined>;
+  (dc: DataConnect, vars?: ListInterviewsVariables): QueryRef<ListInterviewsData, ListInterviewsVariables>;
   operationName: string;
 }
 export const listInterviewsRef: ListInterviewsRef;
 
-export function listInterviews(options?: ExecuteQueryOptions): QueryPromise<ListInterviewsData, undefined>;
-export function listInterviews(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListInterviewsData, undefined>;
+export function listInterviews(vars?: ListInterviewsVariables, options?: ExecuteQueryOptions): QueryPromise<ListInterviewsData, ListInterviewsVariables>;
+export function listInterviews(dc: DataConnect, vars?: ListInterviewsVariables, options?: ExecuteQueryOptions): QueryPromise<ListInterviewsData, ListInterviewsVariables>;
 
 interface CreateInterviewRef {
   /* Allow users to create refs without passing in DataConnect */

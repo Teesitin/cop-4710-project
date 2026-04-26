@@ -10,16 +10,16 @@ export const dataConnectSettings = {
     cacheProvider: makeMemoryCacheProvider()
   }
 };
-export const listJobsRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+export const listJobsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListJobs');
+  return queryRef(dcInstance, 'ListJobs', inputVars);
 }
 listJobsRef.operationName = 'ListJobs';
 
-export function listJobs(dcOrOptions, options) {
+export function listJobs(dcOrVars, varsOrOptions, options) {
   
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
   return executeQuery(listJobsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
 
@@ -71,16 +71,16 @@ export function deleteJob(dcOrVars, vars) {
   return executeMutation(deleteJobRef(dcInstance, inputVars));
 }
 
-export const listApplicationsRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+export const listApplicationsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListApplications');
+  return queryRef(dcInstance, 'ListApplications', inputVars);
 }
 listApplicationsRef.operationName = 'ListApplications';
 
-export function listApplications(dcOrOptions, options) {
+export function listApplications(dcOrVars, varsOrOptions, options) {
   
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
   return executeQuery(listApplicationsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
 
@@ -145,16 +145,16 @@ export function deleteApplication(dcOrVars, vars) {
   return executeMutation(deleteApplicationRef(dcInstance, inputVars));
 }
 
-export const listEmployeesRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+export const listEmployeesRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListEmployees');
+  return queryRef(dcInstance, 'ListEmployees', inputVars);
 }
 listEmployeesRef.operationName = 'ListEmployees';
 
-export function listEmployees(dcOrOptions, options) {
+export function listEmployees(dcOrVars, varsOrOptions, options) {
   
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
   return executeQuery(listEmployeesRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
 
@@ -194,16 +194,16 @@ export function deleteEmployee(dcOrVars, vars) {
   return executeMutation(deleteEmployeeRef(dcInstance, inputVars));
 }
 
-export const listInterviewsRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+export const listInterviewsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListInterviews');
+  return queryRef(dcInstance, 'ListInterviews', inputVars);
 }
 listInterviewsRef.operationName = 'ListInterviews';
 
-export function listInterviews(dcOrOptions, options) {
+export function listInterviews(dcOrVars, varsOrOptions, options) {
   
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
   return executeQuery(listInterviewsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
 

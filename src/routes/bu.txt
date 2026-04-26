@@ -10,7 +10,7 @@
         createJobRef
     } from '../dataconnect-generated';
 
-    type JobRow = {
+    type Job = {
         id: string;
         title: string;
         status: string;
@@ -29,7 +29,7 @@
     let saving = $state(false);
     let error = $state('');
     let formError = $state('');
-    let jobs = $state<JobRow[]>([]);
+    let jobs = $state<Job[]>([]);
 
     let companyName = $state('');
     let jobTitle = $state('');

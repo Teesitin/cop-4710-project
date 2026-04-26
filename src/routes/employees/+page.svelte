@@ -11,16 +11,9 @@
     import AddEmployee from '$lib/assets/forms/AddEmployee.svelte';
     import { notify } from '$lib/assets/components/notificationState.svelte';
 
-    type EmployeeRow = {
-        id: string;
-        name: string;
-        email: string;
-        role: string;
-    };
-
     let loading = $state(true);
     let error = $state('');
-    let employees = $state<EmployeeRow[]>([]);
+    let employees = $state<Employee[]>([]);
     let showAddModal = $state(false);
 
     let editingId = $state<string | null>(null);
@@ -37,7 +30,10 @@
             loading = true;
             error = '';
 
-            const result = await listEmployees();
+            const result = await listEmployees({
+                refresh: Date.now()
+            });
+
             employees = result.data.employees ?? [];
 
             notify.success('Employees loaded.');
@@ -60,13 +56,13 @@
         notify.info('Add employee cancelled.');
     }
 
-    function handleEmployeeAdded(newEmployee: EmployeeRow) {
-        employees = [newEmployee, ...employees];
+    async function handleEmployeeAdded() {
         showAddModal = false;
         notify.success('Employee added.');
+        await loadEmployees();
     }
 
-    function startEditing(employee: EmployeeRow) {
+    function startEditing(employee: Employee) {
         editingId = employee.id;
         editName = employee.name;
         editEmail = employee.email;
