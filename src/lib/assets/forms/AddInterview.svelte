@@ -55,7 +55,7 @@
    onMount(async () => {
     try {
         const dc = getDataConnect(app, connectorConfig);
-        const result = await executeQuery(listApplicationsRef(dc));
+        const result = await executeQuery(listApplicationsRef(dc, { refresh: Date.now() }));
         applications = (result.data.applications ?? []).map((a: any) => ({
             id: a.id,
             applicantName: a.name,
