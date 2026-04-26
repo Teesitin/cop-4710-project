@@ -1,5 +1,6 @@
 <script lang="ts">
     import '$lib/firebase';
+    import { onMount } from 'svelte';
     import { afterNavigate } from '$app/navigation';
 
     import AddJob from '$lib/assets/forms/AddJob.svelte';
@@ -13,6 +14,7 @@
     } from '../../dataconnect-generated';
 
     import { notify } from '$lib/assets/components/notificationState.svelte';
+    import { executeQuery } from 'firebase/data-connect';
 
     type JobSortColumn = 'title' | 'salary' | 'status';
     type SortDirection = 'asc' | 'desc' | 'default';
@@ -20,8 +22,8 @@
     let loading = $state(true);
     let error = $state('');
 
-    let jobs = $state<JobRow[]>([]);
-    let employees = $state<EmployeeRow[]>([]);
+    let jobs = $state<Job[]>([]);
+    let employees = $state<Employee[]>([]);
 
     let showAddModal = $state(false);
 
@@ -35,10 +37,6 @@
     let sortDirection = $state<SortDirection>('default');
 
     const statuses: JobStatus[] = ['Open', 'Interviewing', 'Filled', 'Closed'];
-
-    afterNavigate(() => {
-        loadJobs({ notifyOnSuccess: false });
-    });
 
     function getSalaryNumber(value: string | number | null | undefined) {
         const text = String(value ?? '').trim();
@@ -61,7 +59,7 @@
     }
 
     function getEmployeesForJob(jobId: string) {
-        return employees.filter((employee) => employee.jobId === jobId);
+        return employees.filter((employee) => employee.job.id === jobId);
     }
 
     function openAddModal() {
@@ -134,15 +132,13 @@
             loading = true;
             error = '';
 
-            const [jobsResult, employeesResult] = await Promise.all([
-                listJobs(),
-                listEmployees()
-            ]);
+            const refresh = Date.now();
 
-            jobs = [...(jobsResult.data.jobs ?? [])].reverse();
+            const jobsResult = await listJobs({ refresh });
+            jobs = jobsResult.data.jobs ?? [];
+
+            const employeesResult = await listEmployees({ refresh });
             employees = employeesResult.data.employees ?? [];
-            console.log(jobs);
-
 
             if (options.notifyOnSuccess) {
                 notify.success('Jobs loaded.');
@@ -158,14 +154,11 @@
 
     async function handleJobAdded() {
         closeAddModal();
-
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        await loadJobs({ notifyOnSuccess: false });
-
         notify.success('Job created.');
+        await loadJobs({ notifyOnSuccess: false });
     }
 
-    function startEditing(job: JobRow) {
+    function startEditing(job: Job) {
         editingId = job.id;
         editTitle = job.title;
         editSalary = job.salary ?? '';
@@ -261,7 +254,38 @@
         }
     }
 
-    $inspect({ jobs, employees });
+
+    function getStatusClass(status: string) {
+        const normalized = String(status ?? '').trim().toLowerCase();
+
+        if (normalized === 'open') {
+            return 'border-blue-400 bg-blue-50 text-blue-700 focus:border-blue-500 dark:border-blue-600 dark:bg-blue-950/40 dark:text-blue-300';
+        }
+
+        if (normalized === 'filled') {
+            return 'border-green-400 bg-green-50 text-green-700 focus:border-green-500 dark:border-green-600 dark:bg-green-950/40 dark:text-green-300';
+        }
+
+        if (normalized === 'closed') {
+            return 'border-red-400 bg-red-50 text-red-700 focus:border-red-500 dark:border-red-600 dark:bg-red-950/40 dark:text-red-300';
+        }
+
+        if (normalized === 'interviewing') {
+            return 'border-yellow-400 bg-yellow-50 text-yellow-700 focus:border-yellow-500 dark:border-yellow-600 dark:bg-yellow-950/40 dark:text-yellow-300';
+        }
+
+        return 'border-gray-400 bg-gray-50 text-gray-900 focus:border-blue-500 dark:border-gray-500 dark:bg-gray-700 dark:text-white';
+    }
+
+
+
+    onMount(() => {
+        loadJobs({ notifyOnSuccess: false });
+    });
+
+    afterNavigate(() => {
+        loadJobs({ notifyOnSuccess: false });
+    });
 
 </script>
 
@@ -377,7 +401,7 @@
                 </thead>
 
                 <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-                    {#each filteredJobs as job (job.id)}
+                    {#each jobs as job (job.id)}
                         <tr class="transition hover:bg-gray-50 dark:hover:bg-gray-700/50">
                             {#if editingId === job.id}
                                 <td class="px-4 py-3">
@@ -417,16 +441,21 @@
                                 </td>
 
                                 <td class="px-4 py-3">
-                                    <select
-                                        bind:value={editStatus}
-                                        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                                    >
-                                        {#each statuses as status}
-                                            <option value={status}>
-                                                {status}
-                                            </option>
-                                        {/each}
-                                    </select>
+                                    <div class="inline-block rounded-lg border {getStatusClass(editStatus)}">
+                                        <select
+                                            bind:value={editStatus}
+                                            class="rounded-lg bg-transparent px-3 py-1.5 text-sm font-medium outline-none"
+                                        >
+                                            {#each statuses as status}
+                                                <option
+                                                    value={status}
+                                                    class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
+                                                >
+                                                    {status}
+                                                </option>
+                                            {/each}
+                                        </select>
+                                    </div>
                                 </td>
 
                                 <td class="whitespace-nowrap px-6 py-4">
@@ -485,10 +514,13 @@
                                     <select
                                         value={job.status}
                                         onchange={(e) => handleStatusChange(job.id, (e.currentTarget as HTMLSelectElement).value)}
-                                        class="rounded-lg border border-gray-300 bg-gray-50 px-3 py-1.5 text-sm font-medium text-gray-900 outline-none transition focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                        class="rounded-lg border px-3 py-1.5 text-sm font-medium outline-none transition {getStatusClass(job.status)}"
                                     >
                                         {#each statuses as status}
-                                            <option value={status}>
+                                            <option
+                                                value={status}
+                                                class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
+                                            >
                                                 {status}
                                             </option>
                                         {/each}

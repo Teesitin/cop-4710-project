@@ -17,8 +17,8 @@ Here's an example of how to use it with the first 5 operations:
 import { listJobs, createJob, updateJob, updateJobStatus, deleteJob, listApplications, getApplication, createApplication, updateApplication, updateApplicationStatus } from '@dataconnect/generated';
 
 
-// Operation ListJobs: 
-const { data } = await ListJobs(dataConnect);
+// Operation ListJobs:  For variables, look at type ListJobsVars in ../index.d.ts
+const { data } = await ListJobs(dataConnect, listJobsVars);
 
 // Operation CreateJob:  For variables, look at type CreateJobVars in ../index.d.ts
 const { data } = await CreateJob(dataConnect, createJobVars);
@@ -32,8 +32,8 @@ const { data } = await UpdateJobStatus(dataConnect, updateJobStatusVars);
 // Operation DeleteJob:  For variables, look at type DeleteJobVars in ../index.d.ts
 const { data } = await DeleteJob(dataConnect, deleteJobVars);
 
-// Operation ListApplications: 
-const { data } = await ListApplications(dataConnect);
+// Operation ListApplications:  For variables, look at type ListApplicationsVars in ../index.d.ts
+const { data } = await ListApplications(dataConnect, listApplicationsVars);
 
 // Operation GetApplication:  For variables, look at type GetApplicationVars in ../index.d.ts
 const { data } = await GetApplication(dataConnect, getApplicationVars);

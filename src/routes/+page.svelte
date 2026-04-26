@@ -12,10 +12,10 @@
     let loading = $state(true);
     let error = $state('');
 
-    let jobs = $state<JobRow[]>([]);
-    let applications = $state<ApplicationRow[]>([]);
-    let employees = $state<EmployeeRow[]>([]);
-    let interviews = $state<InterviewRow[]>([]);
+    let jobs = $state<Job[]>([]);
+    let applications = $state<Application[]>([]);
+    let employees = $state<Employee[]>([]);
+    let interviews = $state<Interview[]>([]);
 
     afterNavigate(loadDashboard);
 
@@ -24,11 +24,18 @@
             loading = true;
             error = '';
 
-            const [jobsResult, applicationsResult, employeesResult, interviewsResult] = await Promise.all([
-                listJobs(),
-                listApplications(),
-                listEmployees(),
-                listInterviews()
+            const refresh = Date.now();
+
+            const [
+                jobsResult,
+                applicationsResult,
+                employeesResult,
+                interviewsResult
+            ] = await Promise.all([
+                listJobs({ refresh }),
+                listApplications({ refresh }),
+                listEmployees({ refresh }),
+                listInterviews({ refresh })
             ]);
 
             jobs = jobsResult.data.jobs ?? [];
@@ -171,7 +178,7 @@
         return jobs
             .map((job) => ({
                 ...job,
-                appCount: applications.filter((app) => app.jobId === job.id).length
+                appCount: applications.filter((app) => app.job.id === job.id).length
             }))
             .sort((a, b) => b.appCount - a.appCount)
             .slice(0, 5);

@@ -12,29 +12,12 @@
 
     import AddApplication from '$lib/assets/forms/AddApplication.svelte';
     import { notify } from '$lib/assets/components/notificationState.svelte';
-
-    type JobRow = {
-        id: string;
-        title: string;
-        status: string;
-        salary?: number | null;
-    };
-
-    type ApplicationRow = {
-        id: string;
-        name: string;
-        email: string;
-        jobId?: string;
-        job: JobRow;
-        salaryProposed?: number | null;
-        status: string;
-        appliedDate: string;
-    };
+    import { formatTimestamp } from '$lib';
 
     let loading = $state(true);
     let error = $state('');
-    let applications = $state<ApplicationRow[]>([]);
-    let jobs = $state<JobRow[]>([]);
+    let applications = $state<Application[]>([]);
+    let jobs = $state<Job[]>([]);
     let showAddModal = $state(false);
 
     let editingId = $state<string | null>(null);
@@ -51,30 +34,19 @@
         loadPageData();
     });
 
-    function normalizeApplication(app: any): ApplicationRow {
-        return {
-            id: app.id,
-            name: app.name ?? app.applicant?.name ?? '',
-            email: app.email ?? app.applicant?.email ?? '',
-            jobId: app.jobId,
-            job: app.job,
-            salaryProposed: app.salaryProposed,
-            status: app.status,
-            appliedDate: app.appliedDate
-        };
-    }
-
     async function loadPageData() {
         try {
             loading = true;
             error = '';
 
+            const refresh = Date.now();
+
             const [applicationsResult, jobsResult] = await Promise.all([
-                listApplications(),
-                listJobs()
+                listApplications({ refresh }),
+                listJobs({ refresh })
             ]);
 
-            applications = (applicationsResult.data.applications ?? []).map(normalizeApplication);
+            applications = applicationsResult.data.applications ?? [];
             jobs = jobsResult.data.jobs ?? [];
 
             notify.success('Applications loaded.');
@@ -87,17 +59,17 @@
         }
     }
 
-    function handleApplicationAdded(newApplication: ApplicationRow) {
-        applications = [newApplication, ...applications];
+    async function handleApplicationAdded() {
         showAddModal = false;
         notify.success('Application added.');
+        await loadPageData();
     }
 
-    function startEditing(app: ApplicationRow) {
+    function startEditing(app: Application) {
         editingId = app.id;
         editName = app.name;
         editEmail = app.email;
-        editJobId = app.jobId || app.job?.id || '';
+        editJobId = app.job.id;
         editSalaryProposed = app.salaryProposed ?? '';
         editStatus = app.status;
         editAppliedDate = app.appliedDate;
@@ -152,24 +124,9 @@
                 appliedDate: editAppliedDate
             });
 
-            const selectedJob = jobs.find((job) => job.id === editJobId);
-
-            applications = applications.map((app) => {
-                if (app.id !== applicationId) return app;
-
-                return {
-                    ...app,
-                    name: nameValue,
-                    email: emailValue,
-                    jobId: editJobId,
-                    job: selectedJob ?? app.job,
-                    salaryProposed: salaryValue,
-                    status: editStatus,
-                    appliedDate: editAppliedDate
-                };
-            });
-
             editingId = null;
+            await loadPageData();
+
             notify.success('Application updated.');
         } catch (err) {
             console.error('saveEdit error:', err);
@@ -184,14 +141,7 @@
                 status: newStatus
             });
 
-            applications = applications.map((app) => {
-                if (app.id !== applicationId) return app;
-
-                return {
-                    ...app,
-                    status: newStatus
-                };
-            });
+            await loadPageData();
 
             notify.success(`Application status updated to ${newStatus}.`);
         } catch (err) {
@@ -208,13 +158,34 @@
 
         try {
             await deleteApplication({ id: applicationId });
-            applications = applications.filter((app) => app.id !== applicationId);
+
+            await loadPageData();
+
             notify.success('Application deleted.');
         } catch (err) {
             console.error('handleDelete error:', err);
             notify.error('Failed to delete application.');
         }
     }
+
+    function getStatusClass(status: string) {
+        const normalized = String(status ?? '').trim().toLowerCase();
+
+        if (normalized === 'pending') {
+            return 'border-yellow-400 bg-yellow-50 text-yellow-700 focus:border-yellow-500 dark:border-yellow-600 dark:bg-yellow-950/40 dark:text-yellow-300';
+        }
+
+        if (normalized === 'accepted') {
+            return 'border-green-400 bg-green-50 text-green-700 focus:border-green-500 dark:border-green-600 dark:bg-green-950/40 dark:text-green-300';
+        }
+
+        if (normalized === 'denied') {
+            return 'border-red-400 bg-red-50 text-red-700 focus:border-red-500 dark:border-red-600 dark:bg-red-950/40 dark:text-red-300';
+        }
+
+        return 'border-gray-400 bg-gray-50 text-gray-900 focus:border-blue-500 dark:border-gray-500 dark:bg-gray-700 dark:text-white';
+    }
+
 </script>
 
 <svelte:head>
@@ -326,14 +297,21 @@
                                 </td>
 
                                 <td class="px-4 py-3">
-                                    <select
-                                        bind:value={editStatus}
-                                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1.5 text-sm text-gray-900 dark:text-white outline-none focus:border-blue-500"
-                                    >
-                                        {#each statuses as status}
-                                            <option value={status}>{status}</option>
-                                        {/each}
-                                    </select>
+                                    <div class="inline-block rounded-lg border {getStatusClass(editStatus)}">
+                                        <select
+                                            bind:value={editStatus}
+                                            class="rounded-lg bg-transparent px-3 py-1.5 text-sm font-medium outline-none"
+                                        >
+                                            {#each statuses as status}
+                                                <option
+                                                    value={status}
+                                                    class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
+                                                >
+                                                    {status}
+                                                </option>
+                                            {/each}
+                                        </select>
+                                    </div>
                                 </td>
 
                                 <td class="px-4 py-3">
@@ -385,19 +363,26 @@
                                 </td>
 
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                                    <select
-                                        value={app.status}
-                                        onchange={(e) => handleStatusChange(app.id, (e.currentTarget as HTMLSelectElement).value)}
-                                        class="rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-1.5 text-sm font-medium text-gray-900 dark:text-white outline-none transition focus:border-blue-500"
-                                    >
-                                        {#each statuses as status}
-                                            <option value={status}>{status}</option>
-                                        {/each}
-                                    </select>
+                                    <div class="inline-block rounded-lg border {getStatusClass(app.status)}">
+                                        <select
+                                            value={app.status}
+                                            onchange={(e) => handleStatusChange(app.id, (e.currentTarget as HTMLSelectElement).value)}
+                                            class="rounded-lg bg-transparent px-3 py-1.5 text-sm font-medium outline-none"
+                                        >
+                                            {#each statuses as status}
+                                                <option
+                                                    value={status}
+                                                    class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
+                                                >
+                                                    {status}
+                                                </option>
+                                            {/each}
+                                        </select>
+                                    </div>
                                 </td>
 
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                                    {app.appliedDate}
+                                    {formatTimestamp(app.appliedDate)}
                                 </td>
 
                                 <td class="whitespace-nowrap px-6 py-4">

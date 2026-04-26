@@ -11,20 +11,9 @@
 
     import { notify } from '$lib/assets/components/notificationState.svelte';
 
-    type InterviewTableRow = {
-        id: string;
-        applicationId: string;
-        applicantName: string;
-        jobTitle: string;
-        interviewerName?: string | null;
-        interviewStartDate?: string | null;
-        interviewEndDate?: string | null;
-        interviewModality?: string | null;
-    };
-
     let loading = $state(true);
     let error = $state('');
-    let interviews = $state<InterviewTableRow[]>([]);
+    let interviews = $state<Interview[]>([]);
     let searchQuery = $state('');
     let showAddModal = $state(false);
 
@@ -43,8 +32,9 @@
 
         return interviews.filter((interview) => {
             return (
-                interview.applicantName.toLowerCase().includes(query) ||
-                interview.jobTitle.toLowerCase().includes(query) ||
+                interview.application.name.toLowerCase().includes(query) ||
+                interview.application.email.toLowerCase().includes(query) ||
+                interview.application.job.title.toLowerCase().includes(query) ||
                 String(interview.interviewerName ?? '').toLowerCase().includes(query) ||
                 String(interview.interviewModality ?? '').toLowerCase().includes(query)
             );
@@ -83,29 +73,16 @@
         });
     }
 
-    function normalizeInterview(interview: any): InterviewTableRow {
-        return {
-            id: interview.id,
-            applicationId: interview.application?.id ?? '',
-            applicantName: interview.application?.name ?? 'Unknown Applicant',
-            jobTitle: interview.application?.job?.title ?? '-',
-            interviewerName: interview.interviewerName ?? null,
-            interviewStartDate: interview.interviewStartDate ?? null,
-            interviewEndDate: interview.interviewEndDate ?? null,
-            interviewModality: interview.interviewModality ?? null
-        };
-    }
-
     async function loadInterviews() {
         try {
             loading = true;
             error = '';
 
-            const result = await listInterviews();
+            const result = await listInterviews({
+                refresh: Date.now()
+            });
 
-            interviews = (result.data.interviews ?? [])
-                .map(normalizeInterview)
-                .reverse();
+            interviews = [...(result.data.interviews ?? [])].reverse();
 
             notify.success('Interviews loaded.');
         } catch (err) {
@@ -127,20 +104,20 @@
         notify.info('Add interview cancelled.');
     }
 
-    function handleInterviewAdded(newInterview: InterviewTableRow) {
-        interviews = [newInterview, ...interviews];
+    async function handleInterviewAdded() {
         showAddModal = false;
         notify.success('Interview created.');
+        await loadInterviews();
     }
 
-    function startEditing(interview: InterviewTableRow) {
+    function startEditing(interview: Interview) {
         editingId = interview.id;
         editInterviewerName = interview.interviewerName ?? '';
         editStartDate = toDateTimeLocal(interview.interviewStartDate);
         editEndDate = toDateTimeLocal(interview.interviewEndDate);
         editModality = interview.interviewModality ?? modalities[0];
 
-        notify.info(`Editing interview for ${interview.applicantName}.`);
+        notify.info(`Editing interview for ${interview.application.name}.`);
     }
 
     function cancelEditing() {
@@ -163,19 +140,9 @@
                 interviewModality
             });
 
-            interviews = interviews.map((interview) => {
-                if (interview.id !== id) return interview;
-
-                return {
-                    ...interview,
-                    interviewerName,
-                    interviewStartDate,
-                    interviewEndDate,
-                    interviewModality
-                };
-            });
-
             editingId = null;
+            await loadInterviews();
+
             notify.success('Interview updated.');
         } catch (err) {
             console.error('saveEdit error:', err);
@@ -191,7 +158,9 @@
 
         try {
             await deleteInterview({ id });
-            interviews = interviews.filter((interview) => interview.id !== id);
+
+            await loadInterviews();
+
             notify.success('Interview deleted.');
         } catch (err) {
             console.error('handleDelete error:', err);
@@ -291,11 +260,11 @@
                         <tr class="transition hover:bg-gray-50 dark:hover:bg-gray-700/50">
                             {#if editingId === interview.id}
                                 <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
-                                    {interview.applicantName}
+                                    {interview.application.name}
                                 </td>
 
                                 <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                                    {interview.jobTitle}
+                                    {interview.application.job.title}
                                 </td>
 
                                 <td class="px-4 py-3">
@@ -360,11 +329,11 @@
                                 </td>
                             {:else}
                                 <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
-                                    {interview.applicantName}
+                                    {interview.application.name}
                                 </td>
 
                                 <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                                    {interview.jobTitle}
+                                    {interview.application.job.title}
                                 </td>
 
                                 <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-300">

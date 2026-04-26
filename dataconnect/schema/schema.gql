@@ -10,7 +10,7 @@ type Application @table {
     job: Job!
     salaryProposed: Float
     status: String!
-    appliedDate: Date!
+    appliedDate: Timestamp!
 }
 
 type Employee @table {

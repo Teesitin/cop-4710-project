@@ -5,15 +5,14 @@ export {};
 declare global {
     // BASE TYPES
     type ID = string;
-    type DateString = string;
-    type TimestampString = string;
+    type Timestamp = string;
 
     // STATUS TYPES
     type JobStatus = 'Open' | 'Interviewing' | 'Filled' | 'Closed' | string;
     type ApplicationStatus = 'Pending' | 'Accepted' | 'Denied' | string;
 
     // JOB
-    type JobRow = {
+    type Job = {
         id: ID;
         title: string;
         status: JobStatus;
@@ -21,49 +20,39 @@ declare global {
     };
 
     // APPLICATION
-    type ApplicationRow = {
+    type Application = {
         id: ID;
         name: string;
         email: string;
-        jobId?: ID | null;
-        job?: JobRow | null;
+
+        job: Job;
+
         salaryProposed?: number | null;
         status: ApplicationStatus;
-        appliedDate: DateString;
+
+        appliedDate: Timestamp;
     };
 
     // EMPLOYEE
-    type EmployeeRow = {
+    type Employee = {
         id: ID;
         name: string;
         email: string;
         role: string;
-        jobId?: ID | null;
-        originalApplicationId?: ID | null;
-        job?: JobRow | null;
-        originalApplication?: ApplicationRow | null;
+
+        job: Job;
+        originalApplication: Application;
     };
 
     // INTERVIEW
-    type InterviewApplicationRow = {
+    type Interview = {
         id: ID;
-        name?: string | null;
-        email?: string | null;
-        job?: {
-            id?: ID | null;
-            title?: string | null;
-            status?: JobStatus | null;
-            salary?: number | null;
-        } | null;
-    };
 
-    type InterviewRow = {
-        id: ID;
-        applicationId?: ID | null;
-        application?: InterviewApplicationRow | null;
+        application: Application;
+
         interviewerName?: string | null;
-        interviewStartDate?: TimestampString | null;
-        interviewEndDate?: TimestampString | null;
+        interviewStartDate?: Timestamp | null;
+        interviewEndDate?: Timestamp | null;
         interviewModality?: string | null;
     };
 }

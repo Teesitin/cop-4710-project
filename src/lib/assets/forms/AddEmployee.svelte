@@ -14,12 +14,12 @@
 
     let { close, success } = $props<{
         close: () => void;
-        success: (employee: EmployeeRow) => void;
+        success: (employee: Employee) => void;
     }>();
 
-    let jobs = $state<JobRow[]>([]);
-    let applications = $state<ApplicationRow[]>([]);
-    let employees = $state<EmployeeRow[]>([]);
+    let jobs = $state<Job[]>([]);
+    let applications = $state<Application[]>([]);
+    let employees = $state<Employee[]>([]);
 
     let selectedJobId = $state('');
     let selectedApplicationId = $state('');
@@ -35,7 +35,7 @@
     let hiredApplicationIds = $derived(
         new Set(
             employees
-                .map((employee) => employee.originalApplicationId)
+                .map((employee) => employee.originalApplication.id)
                 .filter(Boolean)
         )
     );
@@ -128,18 +128,16 @@
         try {
             saving = true;
 
-            const filledJob: JobRow = {
+            const filledJob: Job = {
                 ...selectedJob,
                 status: 'Filled'
             };
 
-            const employee: EmployeeRow = {
+            const employee: Employee = {
                 id: crypto.randomUUID(),
                 name: selectedApplication.name,
                 email: selectedApplication.email,
                 role: selectedJob.title,
-                jobId: selectedJob.id,
-                originalApplicationId: selectedApplication.id,
                 job: filledJob,
                 originalApplication: selectedApplication
             };

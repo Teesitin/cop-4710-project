@@ -19,12 +19,36 @@
     let applications = $state<ApplicationOption[]>([]);
     let selectedApplicationId = $state('');
     let interviewerName = $state('');
-    let interviewStartDate = $state('');
-    let interviewEndDate = $state('');
     let interviewModality = $state('');
     let saving = $state(false);
     let loadingApps = $state(true);
     let formError = $state('');
+
+    let interviewStartDate = $state(
+        new Intl.DateTimeFormat('sv-SE', {
+            timeZone: 'America/New_York',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).format(new Date()).replace(' ', 'T')
+    );
+
+    let interviewEndDate = $state(
+        new Intl.DateTimeFormat('sv-SE', {
+            timeZone: 'America/New_York',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).format(new Date(Date.now() + 30 * 60_000)).replace(' ', 'T')
+    );
+
+
 
     const modalities = ['In-Person', 'Online'];
 

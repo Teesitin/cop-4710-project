@@ -2,7 +2,7 @@
 # Jobs
 # =========================================================
 
-query ListJobs @auth(level: PUBLIC, insecureReason: "Local testing only") {
+query ListJobs($refresh: Float) @auth(level: PUBLIC, insecureReason: "Local testing only") {
   jobs {
     id
     title
@@ -54,7 +54,7 @@ mutation DeleteJob($id: UUID!) @auth(level: PUBLIC, insecureReason: "Local testi
 # Applications
 # =========================================================
 
-query ListApplications @auth(level: PUBLIC, insecureReason: "Local testing only") {
+query ListApplications($refresh: Float) @auth(level: PUBLIC, insecureReason: "Local testing only") {
   applications {
     id
     name
@@ -72,7 +72,7 @@ query ListApplications @auth(level: PUBLIC, insecureReason: "Local testing only"
   }
 }
 
-query GetApplication($id: UUID!) @auth(level: PUBLIC, insecureReason: "Local testing only") {
+query GetApplication($id: UUID!, $refresh: Float) @auth(level: PUBLIC, insecureReason: "Local testing only") {
   application(id: $id) {
     id
     name
@@ -96,7 +96,7 @@ mutation CreateApplication(
   $jobId: UUID!
   $salaryProposed: Float
   $status: String!
-  $appliedDate: Date!
+  $appliedDate: Timestamp!
 ) @auth(level: PUBLIC, insecureReason: "Local testing only") {
   application_insert(data: {
     name: $name
@@ -115,7 +115,7 @@ mutation UpdateApplication(
   $jobId: UUID!
   $salaryProposed: Float
   $status: String!
-  $appliedDate: Date!
+  $appliedDate: Timestamp!
 ) @auth(level: PUBLIC, insecureReason: "Local testing only") {
   application_update(id: $id, data: {
     name: $name
@@ -145,7 +145,7 @@ mutation DeleteApplication($id: UUID!) @auth(level: PUBLIC, insecureReason: "Loc
 # Employees
 # =========================================================
 
-query ListEmployees @auth(level: PUBLIC, insecureReason: "Local testing only") {
+query ListEmployees($refresh: Float) @auth(level: PUBLIC, insecureReason: "Local testing only") {
   employees {
     id
     name
@@ -153,20 +153,28 @@ query ListEmployees @auth(level: PUBLIC, insecureReason: "Local testing only") {
     role
     jobId
     originalApplicationId
+
     job {
       id
       title
       status
       salary
     }
+
     originalApplication {
       id
       name
       email
-      status
-      salaryProposed
-      appliedDate
       jobId
+      job {
+        id
+        title
+        status
+        salary
+      }
+      salaryProposed
+      status
+      appliedDate
     }
   }
 }
@@ -204,19 +212,31 @@ mutation DeleteEmployee($id: UUID!) @auth(level: PUBLIC, insecureReason: "Local 
   employee_delete(id: $id)
 }
 
+
 # =========================================================
-# Interview
+# Interviews
 # =========================================================
-query ListInterviews @auth(level: PUBLIC, insecureReason: "Local testing only") {
+
+query ListInterviews($refresh: Float) @auth(level: PUBLIC, insecureReason: "Local testing only") {
   interviews {
     id
+
     application {
       id
       name
+      email
+      jobId
       job {
+        id
         title
+        status
+        salary
       }
+      salaryProposed
+      status
+      appliedDate
     }
+
     interviewerName
     interviewStartDate
     interviewEndDate
