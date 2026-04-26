@@ -45,11 +45,8 @@
 
     function toDateTimeLocal(value?: string | null) {
         if (!value) return '';
-
         const date = new Date(value);
-
         if (Number.isNaN(date.getTime())) return '';
-
         return date.toISOString().slice(0, 16);
     }
 
@@ -59,11 +56,8 @@
 
     function formatDate(value?: string | null) {
         if (!value) return '-';
-
         const date = new Date(value);
-
         if (Number.isNaN(date.getTime())) return '-';
-
         return date.toLocaleString('en-US', {
             month: 'short',
             day: 'numeric',
@@ -78,9 +72,7 @@
             loading = true;
             error = '';
 
-            const result = await listInterviews({
-                refresh: Date.now()
-            });
+            const result = await listInterviews({ refresh: Date.now() });
 
             interviews = [...(result.data.interviews ?? [])].reverse();
 
@@ -116,7 +108,6 @@
         editStartDate = toDateTimeLocal(interview.interviewStartDate);
         editEndDate = toDateTimeLocal(interview.interviewEndDate);
         editModality = interview.interviewModality ?? modalities[0];
-
         notify.info(`Editing interview for ${interview.application.name}.`);
     }
 
@@ -158,9 +149,7 @@
 
         try {
             await deleteInterview({ id });
-
             await loadInterviews();
-
             notify.success('Interview deleted.');
         } catch (err) {
             console.error('handleDelete error:', err);
@@ -206,15 +195,11 @@
 
     {#if loading}
         <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Loading interviews...
-            </p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Loading interviews...</p>
         </div>
     {:else if error}
         <div class="rounded-2xl border border-red-200 bg-red-50 p-6 shadow-sm dark:border-red-900/50 dark:bg-red-900/20">
-            <p class="text-sm font-medium text-red-700 dark:text-red-400">
-                {error}
-            </p>
+            <p class="text-sm font-medium text-red-700 dark:text-red-400">{error}</p>
         </div>
     {:else if filteredInterviews.length === 0}
         <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
@@ -228,28 +213,28 @@
         </div>
     {:else}
         <div class="overflow-hidden overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <table class="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-900">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                        <th class="w-36 px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
                             Applicant
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                        <th class="w-36 px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
                             Job
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                        <th class="w-36 px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
                             Interviewer
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                        <th class="w-44 px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
                             Start
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                        <th class="w-44 px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
                             End
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                        <th class="w-32 px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
                             Modality
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                        <th class="w-24 px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
                             Actions
                         </th>
                     </tr>
@@ -259,11 +244,11 @@
                     {#each filteredInterviews as interview (interview.id)}
                         <tr class="transition hover:bg-gray-50 dark:hover:bg-gray-700/50">
                             {#if editingId === interview.id}
-                                <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                                     {interview.application.name}
                                 </td>
 
-                                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                                     {interview.application.job.title}
                                 </td>
 
@@ -271,7 +256,7 @@
                                     <input
                                         bind:value={editInterviewerName}
                                         placeholder="e.g. Jane Smith"
-                                        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                        class="w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     />
                                 </td>
 
@@ -279,7 +264,7 @@
                                     <input
                                         type="datetime-local"
                                         bind:value={editStartDate}
-                                        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                        class="w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     />
                                 </td>
 
@@ -287,24 +272,22 @@
                                     <input
                                         type="datetime-local"
                                         bind:value={editEndDate}
-                                        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                        class="w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     />
                                 </td>
 
                                 <td class="px-4 py-3">
                                     <select
                                         bind:value={editModality}
-                                        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                        class="w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     >
                                         {#each modalities as modality}
-                                            <option value={modality}>
-                                                {modality}
-                                            </option>
+                                            <option value={modality}>{modality}</option>
                                         {/each}
                                     </select>
                                 </td>
 
-                                <td class="whitespace-nowrap px-6 py-4">
+                                <td class="px-6 py-4">
                                     <div class="flex gap-3">
                                         <button
                                             onclick={() => saveEdit(interview.id)}

@@ -14,10 +14,6 @@
     } from '../../dataconnect-generated';
 
     import { notify } from '$lib/assets/components/notificationState.svelte';
-    import { executeQuery } from 'firebase/data-connect';
-
-    type JobSortColumn = 'title' | 'salary' | 'status';
-    type SortDirection = 'asc' | 'desc' | 'default';
 
     let loading = $state(true);
     let error = $state('');
@@ -33,24 +29,18 @@
     let editStatus = $state<JobStatus>('Open');
 
     let searchQuery = $state('');
-    let sortColumn = $state<JobSortColumn | null>(null);
-    let sortDirection = $state<SortDirection>('default');
 
     const statuses: JobStatus[] = ['Open', 'Interviewing', 'Filled', 'Closed'];
 
     function getSalaryNumber(value: string | number | null | undefined) {
         const text = String(value ?? '').trim();
-
         if (!text) return null;
-
         const numberValue = Number(text);
-
         return Number.isNaN(numberValue) ? null : numberValue;
     }
 
     function formatSalary(value?: number | null) {
         if (value === null || value === undefined) return '-';
-
         return value.toLocaleString('en-US', {
             style: 'currency',
             currency: 'USD',
@@ -70,25 +60,10 @@
         showAddModal = false;
     }
 
-    function toggleSort(column: JobSortColumn) {
-        if (sortColumn === column) {
-            if (sortDirection === 'default') sortDirection = 'asc';
-            else if (sortDirection === 'asc') sortDirection = 'desc';
-            else sortDirection = 'default';
-        } else {
-            sortColumn = column;
-            sortDirection = 'asc';
-        }
-
-        if (sortDirection === 'default') {
-            sortColumn = null;
-        }
-    }
-
     let filteredJobs = $derived.by(() => {
         const query = searchQuery.trim().toLowerCase();
 
-        const result = jobs.filter((job) => {
+        return jobs.filter((job) => {
             const employeeText = getEmployeesForJob(job.id)
                 .map((employee) => `${employee.name} ${employee.email} ${employee.role}`)
                 .join(' ')
@@ -101,30 +76,6 @@
                 employeeText.includes(query)
             );
         });
-
-        if (!sortColumn || sortDirection === 'default') {
-            return result;
-        }
-
-        const column: JobSortColumn = sortColumn;
-
-        return [...result].sort((a, b) => {
-            if (column === 'salary') {
-                const aSalary = a.salary ?? 0;
-                const bSalary = b.salary ?? 0;
-
-                return sortDirection === 'asc'
-                    ? aSalary - bSalary
-                    : bSalary - aSalary;
-            }
-
-            const aValue = String(a[column] ?? '').toLowerCase();
-            const bValue = String(b[column] ?? '').toLowerCase();
-
-            return sortDirection === 'asc'
-                ? aValue.localeCompare(bValue)
-                : bValue.localeCompare(aValue);
-        });
     });
 
     async function loadJobs(options: { notifyOnSuccess?: boolean } = {}) {
@@ -135,7 +86,7 @@
             const refresh = Date.now();
 
             const jobsResult = await listJobs({ refresh });
-            jobs = jobsResult.data.jobs ?? [];
+            jobs = [...(jobsResult.data.jobs ?? [])].reverse();
 
             const employeesResult = await listEmployees({ refresh });
             employees = employeesResult.data.employees ?? [];
@@ -163,7 +114,6 @@
         editTitle = job.title;
         editSalary = job.salary ?? '';
         editStatus = job.status;
-
         notify.info(`Editing "${job.title}".`);
     }
 
@@ -197,13 +147,7 @@
 
             jobs = jobs.map((job) => {
                 if (job.id !== jobId) return job;
-
-                return {
-                    ...job,
-                    title: titleValue,
-                    salary: salaryValue,
-                    status: editStatus
-                };
+                return { ...job, title: titleValue, salary: salaryValue, status: editStatus };
             });
 
             editingId = null;
@@ -216,18 +160,11 @@
 
     async function handleStatusChange(jobId: string, newStatus: string) {
         try {
-            await updateJobStatus({
-                id: jobId,
-                status: newStatus
-            });
+            await updateJobStatus({ id: jobId, status: newStatus });
 
             jobs = jobs.map((job) => {
                 if (job.id !== jobId) return job;
-
-                return {
-                    ...job,
-                    status: newStatus
-                };
+                return { ...job, status: newStatus };
             });
 
             notify.success(`Status updated to ${newStatus}.`);
@@ -245,7 +182,6 @@
 
         try {
             await deleteJob({ id: jobId });
-
             jobs = jobs.filter((job) => job.id !== jobId);
             notify.success('Job deleted.');
         } catch (err) {
@@ -254,30 +190,20 @@
         }
     }
 
-
     function getStatusClass(status: string) {
         const normalized = String(status ?? '').trim().toLowerCase();
 
-        if (normalized === 'open') {
+        if (normalized === 'open')
             return 'border-blue-400 bg-blue-50 text-blue-700 focus:border-blue-500 dark:border-blue-600 dark:bg-blue-950/40 dark:text-blue-300';
-        }
-
-        if (normalized === 'filled') {
+        if (normalized === 'filled')
             return 'border-green-400 bg-green-50 text-green-700 focus:border-green-500 dark:border-green-600 dark:bg-green-950/40 dark:text-green-300';
-        }
-
-        if (normalized === 'closed') {
+        if (normalized === 'closed')
             return 'border-red-400 bg-red-50 text-red-700 focus:border-red-500 dark:border-red-600 dark:bg-red-950/40 dark:text-red-300';
-        }
-
-        if (normalized === 'interviewing') {
+        if (normalized === 'interviewing')
             return 'border-yellow-400 bg-yellow-50 text-yellow-700 focus:border-yellow-500 dark:border-yellow-600 dark:bg-yellow-950/40 dark:text-yellow-300';
-        }
 
         return 'border-gray-400 bg-gray-50 text-gray-900 focus:border-blue-500 dark:border-gray-500 dark:bg-gray-700 dark:text-white';
     }
-
-
 
     onMount(() => {
         loadJobs({ notifyOnSuccess: false });
@@ -286,7 +212,6 @@
     afterNavigate(() => {
         loadJobs({ notifyOnSuccess: false });
     });
-
 </script>
 
 <svelte:head>
@@ -326,15 +251,11 @@
 
     {#if loading}
         <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Loading jobs...
-            </p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Loading jobs...</p>
         </div>
     {:else if error}
         <div class="rounded-2xl border border-red-200 bg-red-50 p-6 shadow-sm dark:border-red-900/50 dark:bg-red-900/20">
-            <p class="text-sm font-medium text-red-700 dark:text-red-400">
-                {error}
-            </p>
+            <p class="text-sm font-medium text-red-700 dark:text-red-400">{error}</p>
         </div>
     {:else if filteredJobs.length === 0}
         <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
@@ -351,49 +272,18 @@
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-900">
                     <tr>
-                        <th
-                            class="cursor-pointer select-none px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 transition hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700"
-                            onclick={() => toggleSort('title')}
-                        >
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
                             Job Title
-
-                            {#if sortColumn === 'title'}
-                                <span class="ml-1">
-                                    {sortDirection === 'asc' ? '↑' : '↓'}
-                                </span>
-                            {/if}
                         </th>
-
-                        <th
-                            class="cursor-pointer select-none px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 transition hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700"
-                            onclick={() => toggleSort('salary')}
-                        >
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
                             Salary
-
-                            {#if sortColumn === 'salary'}
-                                <span class="ml-1">
-                                    {sortDirection === 'asc' ? '↑' : '↓'}
-                                </span>
-                            {/if}
                         </th>
-
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
                             Employee
                         </th>
-
-                        <th
-                            class="cursor-pointer select-none px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 transition hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700"
-                            onclick={() => toggleSort('status')}
-                        >
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
                             Status
-
-                            {#if sortColumn === 'status'}
-                                <span class="ml-1">
-                                    {sortDirection === 'asc' ? '↑' : '↓'}
-                                </span>
-                            {/if}
                         </th>
-
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
                             Actions
                         </th>
@@ -401,7 +291,7 @@
                 </thead>
 
                 <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-                    {#each jobs as job (job.id)}
+                    {#each filteredJobs as job (job.id)}
                         <tr class="transition hover:bg-gray-50 dark:hover:bg-gray-700/50">
                             {#if editingId === job.id}
                                 <td class="px-4 py-3">
@@ -427,13 +317,8 @@
                                         <div class="space-y-1">
                                             {#each getEmployeesForJob(job.id) as employee}
                                                 <div>
-                                                    <p class="font-medium text-gray-900 dark:text-white">
-                                                        {employee.name}
-                                                    </p>
-
-                                                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                                                        {employee.email}
-                                                    </p>
+                                                    <p class="font-medium text-gray-900 dark:text-white">{employee.name}</p>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">{employee.email}</p>
                                                 </div>
                                             {/each}
                                         </div>
@@ -447,10 +332,7 @@
                                             class="rounded-lg bg-transparent px-3 py-1.5 text-sm font-medium outline-none"
                                         >
                                             {#each statuses as status}
-                                                <option
-                                                    value={status}
-                                                    class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
-                                                >
+                                                <option value={status} class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white">
                                                     {status}
                                                 </option>
                                             {/each}
@@ -497,13 +379,8 @@
                                         <div class="space-y-1">
                                             {#each getEmployeesForJob(job.id) as employee}
                                                 <div>
-                                                    <p class="font-medium text-gray-900 dark:text-white">
-                                                        {employee.name}
-                                                    </p>
-
-                                                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                                                        {employee.email}
-                                                    </p>
+                                                    <p class="font-medium text-gray-900 dark:text-white">{employee.name}</p>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">{employee.email}</p>
                                                 </div>
                                             {/each}
                                         </div>
@@ -517,10 +394,7 @@
                                         class="rounded-lg border px-3 py-1.5 text-sm font-medium outline-none transition {getStatusClass(job.status)}"
                                     >
                                         {#each statuses as status}
-                                            <option
-                                                value={status}
-                                                class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
-                                            >
+                                            <option value={status} class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white">
                                                 {status}
                                             </option>
                                         {/each}
